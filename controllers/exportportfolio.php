@@ -1,13 +1,12 @@
-<?php
+  <?php
 
 use Mooc\Export\XmlExport;
 
 /**
- * Controller to export a courseware block tree.
  *
- * @author Christian Flothmann <christian.flothmann@uos.de>
+ * @author Marcel Kipp <mkipp@uos.de>
  */
-class ExportController extends CoursewareStudipController
+class ExportportfolioController extends CoursewareStudipController
 {
     public function before_filter(&$action, &$args)
     {
@@ -22,12 +21,15 @@ class ExportController extends CoursewareStudipController
     {
 
         // create a temporary directory
-        $tempDir = $GLOBALS['TMP_PATH'].'/'.uniqid();
+        //$tempDir = $GLOBALS['TMP_PATH'].'/'.uniqid();
+        $tempDir = $GLOBALS['UPLOAD_PATH'].'/'.uniqid();
         mkdir($tempDir);
+        //echo $tempDir;
 
         // dump the XML to the filesystem
         $export = new XmlExport($this->plugin->getBlockFactory());
         $courseware = $this->container['current_courseware'];
+
         foreach ($courseware->getFiles() as $file) {
             if (trim($file['url']) !== '') {
                 continue;
@@ -42,18 +44,26 @@ class ExportController extends CoursewareStudipController
             $this->render_text($export->export($courseware));
             return;
         }
+
         file_put_contents($tempDir.'/data.xml', $export->export($courseware));
 
-        $zipFile = $GLOBALS['TMP_PATH'].'/'.uniqid().'.zip';
-        create_zip_from_directory($tempDir, $zipFile);
-        $this->set_layout(null);
-        header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename=courseware.zip');
+        // $zipFile = $GLOBALS['UPLOAD_PATH'].'/'.uniqid().'.zip';
+        // create_zip_from_directory($tempDir, $zipFile);
+        //print_r($export->export($courseware));
+        //print_r(scandir($tempDir));
+        echo $tempDir;
+        exit();
 
-        readfile($zipFile);
-
-        $this->deleteRecursively($tempDir);
-        $this->deleteRecursively($zipFile);
+        // $zipFile = $GLOBALS['TMP_PATH'].'/'.uniqid().'.zip';
+        // create_zip_from_directory($tempDir, $zipFile);
+        // $this->set_layout(null);
+        // header('Content-Type: application/zip');
+        // header('Content-Disposition: attachment; filename=courseware.zip');
+        //
+        // readfile($zipFile);
+        //
+        // $this->deleteRecursively($tempDir);
+        // $this->deleteRecursively($zipFile);
     }
 
     private function deleteRecursively($path)
@@ -82,4 +92,5 @@ class ExportController extends CoursewareStudipController
             unlink($path);
         }
     }
+
 }

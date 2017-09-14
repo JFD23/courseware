@@ -1,0 +1,36 @@
+{{#is_owner}}
+
+  {{#viewMode}}
+
+    <div style="border-left: 3px solid #e74c3c; padding-left: 20px;" class="eportfolio-note-header">
+
+      <div class="header-left">
+          <h3>{{{name}}}</h3>
+      </div>
+
+      <div class="header-right">
+        <div id="eportfolioblock-block" class="eportfolio-note-header-icon">
+          <!-- <i class="fa fa-user" aria-hidden="true" onmouseover="animationTooltip();"></i> -->
+
+          <!-- <div id="eportfolioblock-tooltip" class="eportfolio-note-header-tooltip" style="width:231px;">
+            Nur f�r Sie sichtbar
+            <div class="eportfolio-note-header-tooltip-arrow"></div>
+          </div> -->
+
+        </div>
+      </div>
+
+      <div class="" style="clear:both;"></div>
+
+
+    </div>
+
+  {{/viewMode}}
+
+  <div class="content eportfolioBlock ePortfolioContent" >{{{content}}}</div>
+
+{{/is_owner}}
+
+{{^is_owner}}
+
+{{/is_owner}}

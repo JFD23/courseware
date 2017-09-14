@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-0721 09:24+0200\n"
+"POT-Creation-Date: 2016-05-0513 07:44+0200\n"
 "PO-Revision-Date: 2016-05-13 10:09+0100\n"
 "Last-Translator: Tobias Thelen <tobias.thelen@uni-osnabrueck.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,7 +89,7 @@ msgid ""
 "vorhergehenden Abschnitte erfolgreich abgeschloßen haben."
 msgstr "This section is available after you succeeded the previous sections"
 
-#: Courseware.php:81
+#: Courseware.php:88
 msgid "Einstellungen"
 msgstr "Settings"
 
@@ -216,6 +216,31 @@ msgstr "foward"
 msgid "zurück"
 msgstr "back"
 
+msgid "Neuer Abschnitt"
+msgstr "New section"
+
+msgid "Neues Kapitel"
+msgstr "New chapter"
+
+msgid "Neues Unterkapitel"
+msgstr "New subchapter"
+
+msgid "Sichtbar ab"
+msgstr "visible since"
+
+msgid "Wollen Sie den Block wirklich löschen?"
+msgstr "Do you really want to delete that block?"
+
+msgid "Wollen Sie den gesamten Abschnitt wirklich löschen?"
+msgstr "Do your really want to delete the whole chapter?"
+
+msgid ""
+"Wollen Sie wirklich löschen? Sämtliche enthaltenen Abschnitte und Blöcke "
+"werden unwiderruflich entfernt!"
+msgstr ""
+"Do you really want to delete? All sections and blocks contained will be "
+"deleted and cannot be restored!"
+
 msgid "Bestätigung"
 msgstr "Confirmation"
 
@@ -228,11 +253,11 @@ msgstr "Evaluations"
 msgid "Freitext"
 msgstr "Free text"
 
-#: Courseware.php:87
+#: Courseware.php:94
 msgid "Fortschrittsübersicht"
 msgstr "Progress"
 
-#: Courseware.php:216
+#: Courseware.php:223
 msgid ""
 "Mit dem Courseware-Modul können Sie interaktive Lernmodule in Stud.IP "
 "erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. "
@@ -248,21 +273,21 @@ msgstr ""
 "questions and tests within the Vips plugin and insert them as blocks to a "
 "courseware section."
 
-#: Courseware.php:217
+#: Courseware.php:224
 msgid "Information"
 msgstr "Information"
 
-#: Courseware.php:219
+#: Courseware.php:226
 msgid ""
 "Sie können den Courseware-Reiter umbenennen! Wählen Sie dazu den Punkt "
 "'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden."
 msgstr "You can rename the courseware tab. Select 'setting' when in edit mode."
 
-#: Courseware.php:220
+#: Courseware.php:227
 msgid "Tipp"
 msgstr "Tip"
 
-#: Courseware.php:222
+#: Courseware.php:229
 msgid ""
 "Über dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule "
 "direkt in Stud.IP zur Verfügung. Die Module können Texte, Bilder, Videos, "
@@ -275,11 +300,11 @@ msgstr ""
 "communication elements and small quizzes. A progress overview lets learners "
 "track their progress."
 
-#: Courseware.php:223
+#: Courseware.php:230
 msgid "Hinweis"
 msgstr "Hint"
 
-#: Courseware.php:284
+#: Courseware.php:291
 msgid "Zurück zur Courseware"
 msgstr "Back to courseware"
 
@@ -303,61 +328,43 @@ msgstr "The import archive does not contain a data.xml file."
 msgid "Die Datendatei data.xml enthält kein valides XML."
 msgstr "The data file data.xml does not contain valid XML."
 
-#: views/import/index.php:1
-msgid "Datei hochladen"
-msgstr "Upload file"
+#: blocks/Courseware/Courseware.php:515
+#: models/mooc/db/CoursewareFactory.php:57
+msgid "Unterkapitel 1"
+msgstr "Subchapter 1"
 
-#: views/import/index.php:6
-msgid "Es sind Fehler aufgetreten:"
-msgstr "There have been errors:"
+#: blocks/Courseware/Courseware.php:522
+#: models/mooc/db/CoursewareFactory.php:66
+msgid "Abschnitt 1"
+msgstr "Section 1"
 
-#: views/import/index.php:15
-msgid ""
-"Laden Sie eine Datei hoch, die Sie zuvor in einer MOOC.IP-Installation "
-"exportiert haben."
-msgstr ""
-"Upload a file that has been exported from a Mooc.IP courseware instance."
-"exportiert haben."
+#: blocks/DiscussionBlock/DiscussionBlock.php:63
+msgid "gemeinsam"
+msgstr "combined"
 
-#: views/import/index.php:31
-msgid "Im Content-Marktplatz suchen"
-msgstr "Search content marketplace"
+#: blocks/DiscussionBlock/DiscussionBlock.php:64
+msgid "in Gruppen"
+msgstr "in groups"
 
-#: views/import/index.php:35
-msgid "Stichwortsuche: "
-msgstr "Keyword search: "
+#: blocks/Section/Section.php:83
+msgid "Sie sind nicht berechtigt Blöcke anzulegen."
+msgstr "Insufficient rights to create blocks."
 
-#: views/import/index.php:45
-msgid "Es wurden keine Plugins gefunden."
-msgstr "No plugins found."
+#: blocks/Section/Section.php:125
+msgid "Sie sind nicht berechtigt Blöcke zu löschen."
+msgstr "Insufficient rights to delete blocks."
 
-#: views/import/index.php:47
-msgid "Suchtreffer:"
-msgstr "Search hits:"
+#: blocks/TestBlock/TestBlock.php:58
+msgid "Selbsttest"
+msgstr "Self test"
 
-#: views/import/index.php:50
-msgid "Bild"
-msgstr "Image"
+#: blocks/TestBlock/TestBlock.php:59
+msgid "Übungsblatt"
+msgstr "Exercise sheet"
 
-#: views/import/index.php:51
-msgid "Name und Beschreibung"
-msgstr "Name and description"
-
-#: views/import/index.php:52
-msgid "Version"
-msgstr "Version"
-
-#: views/import/index.php:53
-msgid "Bewertung"
-msgstr "Rating"
-
-#: views/import/index.php:54
-msgid "Installieren"
-msgstr "Install"
-
-#: views/import/index.php:94
-msgid "Plugin installieren"
-msgstr "Install plugin"
+#: blocks/TestBlock/TestBlock.php:182 blocks/TestBlock/TestBlock.php:236
+msgid "Das Aufgabenblatt kann zur Zeit nicht bearbeitet werden."
+msgstr "The exercise sheet cannot be edited currently."
 
 #: views/courseware/_settings_discussionblock.php:4
 msgid "Diskussionsblock aktivieren"
@@ -458,41 +465,61 @@ msgstr "Apply"
 msgid "Änderungen übernehmen"
 msgstr "Apply changes"
 
-#: blocks/Courseware/Courseware.php:515 models/mooc/db/CoursewareFactory.php:57
-msgid "Unterkapitel 1"
-msgstr "Subchapter 1"
+#: views/import/index.php:1
+msgid "Datei hochladen"
+msgstr "Upload file"
 
-#: blocks/Courseware/Courseware.php:522 models/mooc/db/CoursewareFactory.php:66
-msgid "Abschnitt 1"
-msgstr "Section 1"
+#: views/import/index.php:6
+msgid "Es sind Fehler aufgetreten:"
+msgstr "There have been errors:"
 
-#: blocks/Section/Section.php:83
-msgid "Sie sind nicht berechtigt Blöcke anzulegen."
-msgstr "Insufficient rights to create blocks."
+#: views/import/index.php:15
+msgid ""
+"Laden Sie eine Datei hoch, die Sie zuvor in einer MOOC.IP-Installation "
+"exportiert haben."
+msgstr ""
+"Upload a file that has been exported from a Mooc.IP courseware instance."
+"exportiert haben."
 
-#: blocks/Section/Section.php:125
-msgid "Sie sind nicht berechtigt Blöcke zu löschen."
-msgstr "Insufficient rights to delete blocks."
+#: views/import/index.php:31
+msgid "Im Content-Marktplatz suchen"
+msgstr "Search content marketplace"
 
-#: blocks/DiscussionBlock/DiscussionBlock.php:63
-msgid "gemeinsam"
-msgstr "combined"
+#: views/import/index.php:35
+msgid "Stichwortsuche: "
+msgstr "Keyword search: "
 
-#: blocks/DiscussionBlock/DiscussionBlock.php:64
-msgid "in Gruppen"
-msgstr "in groups"
+#: views/import/index.php:45
+msgid "Es wurden keine Plugins gefunden."
+msgstr "No plugins found."
 
-#: blocks/TestBlock/TestBlock.php:58
-msgid "Selbsttest"
-msgstr "Self test"
+#: views/import/index.php:47
+msgid "Suchtreffer:"
+msgstr "Search hits:"
 
-#: blocks/TestBlock/TestBlock.php:59
-msgid "Übungsblatt"
-msgstr "Exercise sheet"
+#: views/import/index.php:50
+msgid "Bild"
+msgstr "Image"
 
-#: blocks/TestBlock/TestBlock.php:186 blocks/TestBlock/TestBlock.php:240
-msgid "Das Aufgabenblatt kann zur Zeit nicht bearbeitet werden."
-msgstr "The exercise sheet cannot be edited currently."
+#: views/import/index.php:51
+msgid "Name und Beschreibung"
+msgstr "Name and description"
+
+#: views/import/index.php:52
+msgid "Version"
+msgstr "Version"
+
+#: views/import/index.php:53
+msgid "Bewertung"
+msgstr "Rating"
+
+#: views/import/index.php:54
+msgid "Installieren"
+msgstr "Install"
+
+#: views/import/index.php:94
+msgid "Plugin installieren"
+msgstr "Install plugin"
 
 #: models/mooc/db/CoursewareFactory.php:45
 msgid "Courseware"
@@ -514,28 +541,3 @@ msgstr "Name of the HTML-Block"
 #: models/mooc/ui/Block.php:516
 msgid "Sie sind nicht berechtigt diesen Block zu editieren."
 msgstr "Insufficient rights to edit this block."
-
-#~ msgid "Neuer Abschnitt"
-#~ msgstr "New section"
-
-#~ msgid "Neues Kapitel"
-#~ msgstr "New chapter"
-
-#~ msgid "Neues Unterkapitel"
-#~ msgstr "New subchapter"
-
-#~ msgid "Sichtbar ab"
-#~ msgstr "visible since"
-
-#~ msgid "Wollen Sie den Block wirklich löschen?"
-#~ msgstr "Do you really want to delete that block?"
-
-#~ msgid "Wollen Sie den gesamten Abschnitt wirklich löschen?"
-#~ msgstr "Do your really want to delete the whole chapter?"
-
-#~ msgid ""
-#~ "Wollen Sie wirklich löschen? Sämtliche enthaltenen Abschnitte und Blöcke "
-#~ "werden unwiderruflich entfernt!"
-#~ msgstr ""
-#~ "Do you really want to delete? All sections and blocks contained will be "
-#~ "deleted and cannot be restored!"

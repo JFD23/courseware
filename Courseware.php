@@ -43,13 +43,6 @@ class Courseware extends StudIPPlugin implements StandardPlugin
 
         // set text-domain for translations in this plugin
         bindtextdomain('courseware', dirname(__FILE__) . '/locale');
-
-        // define a short-hand function for translating text. This function is now registerd in the global scope. xD
-        if (!function_exists('_cw')) {
-            function _cw($message) {
-                return dgettext('courseware', $message);
-            }
-        }
     }
 
     public function getPluginname()
@@ -57,11 +50,18 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         return 'MOOC.IP - Courseware';
     }
 
-    // bei Aufruf des Plugins über plugin.php/mooc/...
+    // bei Aufruf des Plugins ï¿½ber plugin.php/mooc/...
     public function initialize ()
     {
         PageLayout::setTitle($_SESSION['SessSemName']['header_line'] . ' - ' . $this->getPluginname());
         PageLayout::addStylesheet($this->getPluginURL().'/assets/style.css');
+
+        //eportfolio
+        PageLayout::addStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css');
+        PageLayout::addStylesheet($this->getPluginURL().'/assets/eportfolio.css');
+        PageLayout::addStylesheet($this->getPluginURL().'/assets/animate.css');
+        PageLayout::addScript($this->getPluginURL() . '/assets/js/eportfolio.js');
+
         PageLayout::setHelpKeyword("MoocIP.Courseware"); // Hilfeseite im Hilfewiki
         $this->getHelpbarContent();
     }
@@ -91,7 +91,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         // tabs for students
         if (!$this->container['current_user']->hasPerm($course_id, 'tutor')) {
             $progress_url = PluginEngine::getURL($this, compact('cid'), 'progress', true);
-            $tabs['mooc_progress'] = new Navigation(_cw('Fortschrittsübersicht'), $progress_url);
+            $tabs['mooc_progress'] = new Navigation(_cw('Fortschrittsï¿½bersicht'), $progress_url);
             $tabs['mooc_progress']->setImage('icons/16/white/group3.png');
             $tabs['mooc_progress']->setActiveImage('icons/16/black/group3.png');
         }
@@ -220,13 +220,13 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         $can_edit = $GLOBALS['perm']->have_studip_perm("tutor", $this->container['cid']);
 
         if ($can_edit) {
-            $description = _cw("Mit dem Courseware-Modul können Sie interaktive Lernmodule in Stud.IP erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fügen Sie Abschnitte und Blöcke (Text und Bild, Video, Diskussion, Quiz)  hinzu. Aufgaben erstellen und verwalten Sie mit dem Vips-Plugin und binden Sie dann in einen Courseware-Abschnitt ein.");
+            $description = _cw("Mit dem Courseware-Modul kï¿½nnen Sie interaktive Lernmodule in Stud.IP erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fï¿½gen Sie Abschnitte und Blï¿½cke (Text und Bild, Video, Diskussion, Quiz)  hinzu. Aufgaben erstellen und verwalten Sie mit dem Vips-Plugin und binden Sie dann in einen Courseware-Abschnitt ein.");
             Helpbar::get()->addPlainText(_cw('Information'), $description, 'icons/16/white/info-circle.png');
 
-            $tip = _cw("Sie können den Courseware-Reiter umbenennen! Wählen Sie dazu den Punkt 'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden.");
+            $tip = _cw("Sie kï¿½nnen den Courseware-Reiter umbenennen! Wï¿½hlen Sie dazu den Punkt 'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden.");
             Helpbar::get()->addPlainText(_cw('Tipp'), $tip, 'icons/16/white/info-circle.png');
         } else {
-            $description = _cw("Über dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule direkt in Stud.IP zur Verfügung. Die Module können Texte, Bilder, Videos, Kommunikationselemente und kleine Quizzes beinhalten. Ihren Bearbeitungsfortschritt sehen Sie auf einen Blick im Reiter Fortschrittsübersicht.");
+            $description = _cw("ï¿½ber dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule direkt in Stud.IP zur Verfï¿½gung. Die Module kï¿½nnen Texte, Bilder, Videos, Kommunikationselemente und kleine Quizzes beinhalten. Ihren Bearbeitungsfortschritt sehen Sie auf einen Blick im Reiter Fortschrittsï¿½bersicht.");
             Helpbar::get()->addPlainText(_cw('Hinweis'), $description, 'icons/16/white/info-circle.png');
         }
     }
@@ -288,7 +288,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         // create a widget for given id (md5 hash - ensured by markup regex)
         return '<span class="mooc-forumblock">'
             . '<a href="'. PluginEngine::getLink('courseware' , array('selected' => $matches[2]), 'courseware') .'">'
-            . _cw('Zurück zur Courseware')
+            . _cw('Zurï¿½ck zur Courseware')
             . '</a></span>';
     }
 }
