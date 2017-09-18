@@ -1,41 +1,27 @@
-<div class="eportfolio-note">
+{{#show_note}}
+<div style="border-left: 3px solid #e74c3c; padding-left: 20px;" class="eportfolio-note-header">
 
-  {{#is_dozent}}
-    {{#viewMode}}
-
-      <div style="border-left: 3px solid #f39c12; padding-left: 20px;" class="eportfolio-note-header">
-
-        <div class="header-left">
-          <h3><i class="fa fa-binoculars" aria-hidden="true"></i> ePortfolio Notiz</h3>
-        </div>
-
-        <div class="header-right">
-            <div id="eportfolioblocksupervisor-block" class="eportfolio-note-header-icon">
-
-
-              <!-- <div id="eportfolioblocksupervisor-tooltip" class="eportfolio-note-header-tooltip" style="width:231px;">
-                Nur für Ihren Supervisor sichtbar
-                <div class="eportfolio-note-header-tooltip-arrow"></div>
-              </div> -->
-
-            </div>
-        </div>
-
-        <div class="" style="clear:both;"></div>
-
-
-
+      <div class="header-left">
+          <h3>Supervisor-Notiz</h3>
       </div>
 
-    {{/viewMode}}
-    <div class="content eportfolioBlock ePortfolioContent">{{{content}}}</div>
-  {{/is_dozent}}
+      <div class="header-right">
+        <div id="eportfolioblock-block" class="eportfolio-note-header-icon">
 
+        </div>
+      </div>
 
+      <div class="" style="clear:both;"></div>
 
-  {{#is_student}}
-
-  {{/is_student}}
-
-
+<div class="content eportfolioBlock ePortfolioContent">{{{content}}}</div>
+{{^supervisor}}
+    <h4>Notiz des Supervisors:</h4>
+    <div class="content eportfolioBlock ePortfolioContent">{{{supervisorcontent}}}</div>
+{{/supervisor}}
+{{#supervisor}}
+    <textarea class="add_toolbar wysiwyg" name=supervisorcontent placeholder="Geben Sie hier Ihren Text ein">{{{supervisorcontent}}}</textarea>
+    <div class="cw-button-box">
+    <button name=save class=button>Speichern</button>
 </div>
+{{/supervisor}}
+{{/show_note}}

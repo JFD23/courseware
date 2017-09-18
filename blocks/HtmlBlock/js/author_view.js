@@ -8,7 +8,6 @@ define(['assets/js/author_view', 'assets/js/url'],
         events: {
             "click button[name=save]":   "onSave",
             "click button[name=cancel]": "switchBack"
-
         },
 
         initialize: function() {

@@ -1,16 +1,5 @@
-{{#is_owner}}
-  <textarea class="add_toolbar wysiwyg" name=content placeholder="Geben Sie hier Ihre Notizen hier ein">{{{content}}}</textarea>
-  <button name=save class=button>Speichern</button>
-  <button name=cancel class=button>Abbrechen</button>
-  <span style="background-color:#2ecc71;padding: 10px 3px;">Diese Notiz ist <b>nur</b> für Sie sichtbar</span>
-{{/is_owner}}
-
-{{^is_owner}}
-<textarea class="add_toolbar wysiwyg" name=content placeholder="Geben Sie hier Ihre Notizen hier ein">{{{content}}}</textarea>
-<button name=save class=button>Speichern</button>
-<button name=cancel class=button>Abbrechen</button>
-
-
-
-<div style="border: 3px solid #e74c3c;margin:10px 0px; padding: 26px 3px; text-align: center;">Diese Notiz ist <b>nur</b> für Sie sichtbar</div>
-{{/is_owner}}
+<textarea class="add_toolbar wysiwyg" name=content placeholder="Geben Sie hier Ihren Text ein">{{{content}}}</textarea>
+<div class="cw-button-box">
+    <button name=save class=button>Speichern</button>
+    <button name=cancel class=button>Abbrechen</button>
+</div>

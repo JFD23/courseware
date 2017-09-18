@@ -8,6 +8,7 @@ define(['assets/js/author_view', 'assets/js/url'],
         events: {
             "click button[name=save]":   "onSave",
             "click button[name=cancel]": "switchBack"
+
         },
 
         initialize: function() {
@@ -21,14 +22,11 @@ define(['assets/js/author_view', 'assets/js/url'],
         },
 
         onNavigate: function(event){
-            if(!$("section .block-content button[name=save]").length) {
-                return;
-            }
-            if(event.isUserInputHandled) {
-                return;
-            }
-            event.isUserInputHandled = true
-            Backbone.trigger('preventnavigateto', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie die Seite trotzdem verlassen?'));
+            if(!$("section .block-content button[name=save]").length) return;
+            if(event.isUserInputHandled) return;
+            event.isUserInputHandled = true;    
+            Backbone.trigger('preventnavigateto', !confirm('Es gibt nicht gespeicherte Ã„nderungen. MÃ¶chten Sie die Seite trotzdem verlassen?'));
+
         },
 
         postRender: function() {
@@ -80,8 +78,8 @@ define(['assets/js/author_view', 'assets/js/url'],
             }
 
             event.isUserInputHandled = true;
-            Backbone.trigger('preventviewswitch', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie trotzdem fortfahren?'));
-        },
+            Backbone.trigger('preventviewswitch', !confirm('Es gibt nicht gespeicherte Ã„nderungen. MÃ¶chten Sie trotzdem fortfahren?'));
+        }, 
 
     });
 });

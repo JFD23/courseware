@@ -9,51 +9,48 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlockSupervisor extends Block
 {
-    const NAME = 'Notiz für SupervisorInnen';
+    const NAME = 'Notiz für Supervisor';
 
     function initialize()
     {
         $this->defineField('content', \Mooc\SCOPE_BLOCK, '');
-
+        $this->defineField('supervisorcontent', \Mooc\SCOPE_BLOCK, '');
     }
 
     function student_view()
     {
-
-        $output = '';
-        $outputInfoDozent = 'Sie sind berechtigt diese Blöcke zu sehen';
-        $outputInfoStudent = 'Sie sind NICHT berechtigt diese Blöcke zu sehen';
-
-        if ($this->container['current_user']->canUpdate($this)) {
-          $output = "<script>console.log(' ". $outputInfoDozent ." ');</script>";
-
-          return array(
-            'content' => formatReady($this->content),
-            'logged_in_userid' => $GLOBALS["user"]->id,
-            'is_dozent' => 'true',
-            'viewMode' => 'true',
-          );
-
+        if($this->getCurrentUser()->id == "e7a0a84b161f3e8c09b4a0a2e8a58147") {
+            $supervisor = true;
         } else {
-          $output = "<script>console.log(' ". $outputInfoStudent ." ');</script>";
-
-          return array(
-            'logged_in_userid' => $GLOBALS["user"]->id,
-            'is_student' => 'true',
-          );
-
+            $supervisor = false;
+        }
+        
+        if($this->container['current_user']->canUpdate($this)) {
+            $owner = true;
+        } else {
+            $owner = false;
         }
 
-        echo $output;
-
         $this->setGrade(1.0);
-
+        if ($supervisor || $owner) {
+            return array(
+                'content' => formatReady($this->content),
+                'supervisorcontent' => formatReady($this->supervisorcontent),
+                'show_note' => true,
+                'supervisor' => $supervisor,
+                'owner' => $owner
+            );
+        } else {
+            return array(
+                'content' => "",
+                'supervisorcontent' => "",
+                'show_note' => false
+            );
+        }
     }
-
 
     function author_view()
     {
-
         $this->authorizeUpdate();
 
         if ($this->container['wysiwyg_refined']) {
@@ -61,12 +58,7 @@ class PortfolioBlockSupervisor extends Block
         } else {
             $content = htmlReady($this->content);
         }
-        return array('content' => $content, 'editMode' => 'true');
-
-        if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
-        }
-
+        return compact('content');
     }
 
     /**
@@ -87,6 +79,29 @@ class PortfolioBlockSupervisor extends Block
         }
 
         return array('content' => $this->content);
+    }
+    
+    /**
+     * Updates the block's contents.
+     *
+     * @param array $data                  The request data
+     *
+     * @return array The block's data
+     */
+    public function savesupervisor_handler(array $data)
+    {
+        if ($this->getCurrentUser()->id == "e7a0a84b161f3e8c09b4a0a2e8a58147") {
+            // second param in if-block is special case for uos. old studip with new wysiwyg
+            if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
+                $this->supervisorcontent = \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify((string) $data['supervisorcontent']));
+            } else {
+              $this->supervisorcontent = (string) $data['supervisorcontent'];
+            }
+
+            return ;
+         } else {
+            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt diesen Block zu editieren.")); 
+        }
     }
 
     /**
@@ -284,5 +299,21 @@ class PortfolioBlockSupervisor extends Block
     public function buildUrl($baseUrl, $path, $components)
     {
         return rtrim($baseUrl, '/').'/'.ltrim($path, '/').'?'.$components['query'];
+    }
+    
+        /**
+     * {@inheritdoc}
+     */
+    public function getXmlNamespace()
+    {
+        return 'http://moocip.de/schema/block/portfoliosupervisor/';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getXmlSchemaLocation()
+    {
+        return 'http://moocip.de/schema/block/portfoliosupervisor/portfoliosupervisor-1.0.xsd';
     }
 }

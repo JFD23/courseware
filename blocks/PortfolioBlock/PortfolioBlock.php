@@ -9,42 +9,31 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlock extends Block
 {
-    const NAME = 'Private Notiz';
+    const NAME = 'private Notiz';
 
     function initialize()
     {
         $this->defineField('content', \Mooc\SCOPE_BLOCK, '');
-        $this->defineField('ownerid', \Mooc\SCOPE_BLOCK, '');
-
-        if ($this->ownerid === '') {
-          $this->ownerid = $GLOBALS["user"]->id;
-          $this->_fields['ownerid']->store();
-        }
     }
 
     function student_view()
     {
-
-        if (!$this->container['current_user']->canUpdate($this)) {
-            // throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
-        }
-
         $this->setGrade(1.0);
-
-        return array(
-          'content' => formatReady($this->content),
-          'ownerid' => $this->ownerid,
-          'logged_in_userid' => $GLOBALS["user"]->id,
-          'is_owner' => $this->ownerid === $GLOBALS["user"]->id,
-          'viewMode' => 'true',
-          'name' => 'ePortfolio Notiz',
-        );
+        if ($this->container['current_user']->canUpdate($this)) {
+            return array(
+                'content' => formatReady($this->content),
+                'show_note' => true
+            );
+        } else {
+            return array(
+                'content' => "",
+                'show_note' => false
+            );
+        }
     }
-
 
     function author_view()
     {
-
         $this->authorizeUpdate();
 
         if ($this->container['wysiwyg_refined']) {
@@ -52,12 +41,7 @@ class PortfolioBlock extends Block
         } else {
             $content = htmlReady($this->content);
         }
-        return array('content' => $content, "ownerid" => $this->ownerid);
-
-        if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
-        }
-
+        return compact('content');
     }
 
     /**
