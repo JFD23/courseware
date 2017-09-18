@@ -8,7 +8,6 @@ define(['assets/js/author_view', 'assets/js/url'],
         events: {
             "click button[name=save]":   "onSave",
             "click button[name=cancel]": "switchBack"
-
         },
 
         initialize: function() {
@@ -18,16 +17,19 @@ define(['assets/js/author_view', 'assets/js/url'],
             $sortingButtons.addClass('no-sorting');
 
             Backbone.on('beforemodeswitch', this.onModeSwitch, this);
-	    Backbone.on('beforenavigate', this.onNavigate, this);
+            Backbone.on('beforenavigate', this.onNavigate, this);
         },
 
         onNavigate: function(event){
-	    if(!$("section .block-content button[name=save]").length) return;
-	    if(event.isUserInputHandled) return;
+            if(!$("section .block-content button[name=save]").length) {
+                return;
+            }
+            if(event.isUserInputHandled) {
+                return;
+            }
             event.isUserInputHandled = true
             Backbone.trigger('preventnavigateto', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie die Seite trotzdem verlassen?'));
-
-	},
+        },
 
         postRender: function() {
             this.$("textarea").addToolbar();

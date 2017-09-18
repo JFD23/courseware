@@ -26,7 +26,7 @@ class PortfolioBlock extends Block
     {
 
         if (!$this->container['current_user']->canUpdate($this)) {
-            // throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blï¿½cke zu lï¿½schen."));
+            // throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
         }
 
         $this->setGrade(1.0);
@@ -55,7 +55,7 @@ class PortfolioBlock extends Block
         return array('content' => $content, "ownerid" => $this->ownerid);
 
         if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blï¿½cke zu lï¿½schen."));
+            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
         }
 
     }

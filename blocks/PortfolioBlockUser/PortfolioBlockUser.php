@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlockUser extends Block
 {
-    const NAME = 'Notiz fÃ¼r alle';
+    const NAME = 'Notiz für alle';
 
     function initialize()
     {
@@ -21,8 +21,8 @@ class PortfolioBlockUser extends Block
     {
 
         $output = '';
-        $outputInfoDozent = 'Sie sind berechtigt diese Blï¿½cke zu sehen';
-        $outputInfoStudent = 'Sie sind NICHT berechtigt diese Blï¿½cke zu sehen';
+        $outputInfoDozent = 'Sie sind berechtigt diese Blöcke zu sehen';
+        $outputInfoStudent = 'Sie sind NICHT berechtigt diese Blöcke zu sehen';
 
         if ($this->container['current_user']->canUpdate($this)) {
           $output = "<script>console.log(' ". $outputInfoDozent ." ');</script>";
@@ -65,7 +65,7 @@ class PortfolioBlockUser extends Block
         return array('content' => $content, 'editMode' => 'true');
 
         if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blï¿½cke zu lï¿½schen."));
+            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
         }
 
     }
