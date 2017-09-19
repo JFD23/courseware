@@ -19,7 +19,9 @@ class PortfolioBlockSupervisor extends Block
 
     function student_view()
     {
-        if($this->getCurrentUser()->id == "e7a0a84b161f3e8c09b4a0a2e8a58147") {
+        $supervisorQuery  = \DBManager::get()->query("SELECT supervisor_id FROM eportfolio WHERE seminar_id = '$cid'")->fetchAll();
+        $supervisorId     = $supervisorQuery[0][0];
+        if($this->getCurrentUser()->id == $supervisorId) {
             $supervisor = true;
         } else {
             $supervisor = false;

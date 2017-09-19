@@ -10,7 +10,7 @@ msgstr ""
 "#-#-#-#-#  js.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-0721 09:24+0200\n"
+"POT-Creation-Date: 2017-09-0919 14:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "#-#-#-#-#  courseware.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-21 09:24+0200\n"
+"POT-Creation-Date: 2017-09-19 14:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: views/import/index.php:25
+#: views/import/index.php:25 views/importportfolio/index.php:25
 msgid "Abbrechen"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgid ""
 "vorhergehenden Abschnitte erfolgreich abgeschloßen haben."
 msgstr ""
 
-#: Courseware.php:81
+#: Courseware.php:88
 msgid "Einstellungen"
 msgstr ""
 
@@ -224,6 +224,29 @@ msgstr ""
 msgid "zurück"
 msgstr ""
 
+msgid "Neuer Abschnitt"
+msgstr ""
+
+msgid "Neues Kapitel"
+msgstr ""
+
+msgid "Neues Unterkapitel"
+msgstr ""
+
+msgid "Sichtbar ab"
+msgstr ""
+
+msgid "Wollen Sie den Block wirklich löschen?"
+msgstr ""
+
+msgid "Wollen Sie den gesamten Abschnitt wirklich löschen?"
+msgstr ""
+
+msgid ""
+"Wollen Sie wirklich löschen? Sämtliche enthaltenen Abschnitte und Blöcke "
+"werden unwiderruflich entfernt!"
+msgstr ""
+
 msgid "Bestätigung"
 msgstr ""
 
@@ -236,49 +259,49 @@ msgstr ""
 msgid "Freitext"
 msgstr ""
 
-#: Courseware.php:87
-msgid "Fortschrittsübersicht"
+#: Courseware.php:94
+msgid "Fortschrittsï¿½bersicht"
 msgstr ""
 
-#: Courseware.php:216
+#: Courseware.php:223
 msgid ""
-"Mit dem Courseware-Modul können Sie interaktive Lernmodule in Stud.IP "
+"Mit dem Courseware-Modul kï¿½nnen Sie interaktive Lernmodule in Stud.IP "
 "erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. "
-"Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fügen Sie "
-"Abschnitte und Blöcke (Text und Bild, Video, Diskussion, Quiz)  hinzu. "
+"Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fï¿½gen "
+"Sie Abschnitte und Blï¿½cke (Text und Bild, Video, Diskussion, Quiz)  hinzu. "
 "Aufgaben erstellen und verwalten Sie mit dem Vips-Plugin und binden Sie dann "
 "in einen Courseware-Abschnitt ein."
 msgstr ""
 
-#: Courseware.php:217
+#: Courseware.php:224
 msgid "Information"
 msgstr ""
 
-#: Courseware.php:219
+#: Courseware.php:226
 msgid ""
-"Sie können den Courseware-Reiter umbenennen! Wählen Sie dazu den Punkt "
+"Sie kï¿½nnen den Courseware-Reiter umbenennen! Wï¿½hlen Sie dazu den Punkt "
 "'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden."
 msgstr ""
 
-#: Courseware.php:220
+#: Courseware.php:227
 msgid "Tipp"
 msgstr ""
 
-#: Courseware.php:222
+#: Courseware.php:229
 msgid ""
-"Über dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule "
-"direkt in Stud.IP zur Verfügung. Die Module können Texte, Bilder, Videos, "
-"Kommunikationselemente und kleine Quizzes beinhalten. Ihren "
+"ï¿½ber dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule "
+"direkt in Stud.IP zur Verfï¿½gung. Die Module kï¿½nnen Texte, Bilder, "
+"Videos, Kommunikationselemente und kleine Quizzes beinhalten. Ihren "
 "Bearbeitungsfortschritt sehen Sie auf einen Blick im Reiter "
-"Fortschrittsübersicht."
+"Fortschrittsï¿½bersicht."
 msgstr ""
 
-#: Courseware.php:223
+#: Courseware.php:230
 msgid "Hinweis"
 msgstr ""
 
-#: Courseware.php:284
-msgid "Zurück zur Courseware"
+#: Courseware.php:291
+msgid "Zurï¿½ck zur Courseware"
 msgstr ""
 
 #: controllers/courseware.php:59
@@ -286,7 +309,7 @@ msgid "Die Einstellungen wurden gespeichert."
 msgstr ""
 
 #: controllers/courseware.php:179
-msgid "Tutoren können diese Einstellung nicht speichern."
+msgid "Tutoren kï¿½nnen diese Einstellung nicht speichern."
 msgstr ""
 
 #: controllers/import.php:48
@@ -301,58 +324,47 @@ msgstr ""
 msgid "Die Datendatei data.xml enthält kein valides XML."
 msgstr ""
 
-#: views/import/index.php:1
-msgid "Datei hochladen"
+#: blocks/Courseware/Courseware.php:515
+#: models/mooc/db/CoursewareFactory.php:57
+msgid "Unterkapitel 1"
 msgstr ""
 
-#: views/import/index.php:6
-msgid "Es sind Fehler aufgetreten:"
+#: blocks/Courseware/Courseware.php:522
+#: models/mooc/db/CoursewareFactory.php:66
+msgid "Abschnitt 1"
 msgstr ""
 
-#: views/import/index.php:15
-msgid ""
-"Laden Sie eine Datei hoch, die Sie zuvor in einer MOOC.IP-Installation "
-"exportiert haben."
+#: blocks/DiscussionBlock/DiscussionBlock.php:63
+msgid "gemeinsam"
 msgstr ""
 
-#: views/import/index.php:31
-msgid "Im Content-Marktplatz suchen"
+#: blocks/DiscussionBlock/DiscussionBlock.php:64
+msgid "in Gruppen"
 msgstr ""
 
-#: views/import/index.php:35
-msgid "Stichwortsuche: "
+#: blocks/PortfolioBlockSupervisor/PortfolioBlockSupervisor.php:105
+#: models/mooc/ui/Block.php:516
+msgid "Sie sind nicht berechtigt diesen Block zu editieren."
 msgstr ""
 
-#: views/import/index.php:45
-msgid "Es wurden keine Plugins gefunden."
+#: blocks/Section/Section.php:83
+msgid "Sie sind nicht berechtigt Blöcke anzulegen."
 msgstr ""
 
-#: views/import/index.php:47
-msgid "Suchtreffer:"
+#: blocks/Section/Section.php:125
+msgid "Sie sind nicht berechtigt Blöcke zu löschen."
 msgstr ""
 
-#: views/import/index.php:50
-msgid "Bild"
+#: blocks/TestBlock/TestBlock.php:58
+msgid "Selbsttest"
 msgstr ""
 
-#: views/import/index.php:51
-msgid "Name und Beschreibung"
+#: blocks/TestBlock/TestBlock.php:59
+msgid "Übungsblatt"
 msgstr ""
 
-#: views/import/index.php:52
-msgid "Version"
-msgstr ""
-
-#: views/import/index.php:53
-msgid "Bewertung"
-msgstr ""
-
-#: views/import/index.php:54
-msgid "Installieren"
-msgstr ""
-
-#: views/import/index.php:94
-msgid "Plugin installieren"
+#: blocks/TestBlock/TestBlock.php:186 blocks/TestBlock/TestBlock.php:240
+msgid "Das Aufgabenblatt kann zur Zeit nicht bearbeitet werden."
 msgstr ""
 
 #: views/courseware/_settings_discussionblock.php:4
@@ -445,40 +457,58 @@ msgstr ""
 msgid "Änderungen übernehmen"
 msgstr ""
 
-#: blocks/Courseware/Courseware.php:515 models/mooc/db/CoursewareFactory.php:57
-msgid "Unterkapitel 1"
+#: views/import/index.php:1 views/importportfolio/index.php:1
+msgid "Datei hochladen"
 msgstr ""
 
-#: blocks/Courseware/Courseware.php:522 models/mooc/db/CoursewareFactory.php:66
-msgid "Abschnitt 1"
+#: views/import/index.php:6 views/importportfolio/index.php:6
+msgid "Es sind Fehler aufgetreten:"
 msgstr ""
 
-#: blocks/Section/Section.php:83
-msgid "Sie sind nicht berechtigt Blöcke anzulegen."
+#: views/import/index.php:15 views/importportfolio/index.php:15
+msgid ""
+"Laden Sie eine Datei hoch, die Sie zuvor in einer MOOC.IP-Installation "
+"exportiert haben."
 msgstr ""
 
-#: blocks/Section/Section.php:125
-msgid "Sie sind nicht berechtigt Blöcke zu löschen."
+#: views/import/index.php:31 views/importportfolio/index.php:31
+msgid "Im Content-Marktplatz suchen"
 msgstr ""
 
-#: blocks/DiscussionBlock/DiscussionBlock.php:63
-msgid "gemeinsam"
+#: views/import/index.php:35 views/importportfolio/index.php:35
+msgid "Stichwortsuche: "
 msgstr ""
 
-#: blocks/DiscussionBlock/DiscussionBlock.php:64
-msgid "in Gruppen"
+#: views/import/index.php:45 views/importportfolio/index.php:45
+msgid "Es wurden keine Plugins gefunden."
 msgstr ""
 
-#: blocks/TestBlock/TestBlock.php:58
-msgid "Selbsttest"
+#: views/import/index.php:47 views/importportfolio/index.php:47
+msgid "Suchtreffer:"
 msgstr ""
 
-#: blocks/TestBlock/TestBlock.php:59
-msgid "Übungsblatt"
+#: views/import/index.php:50 views/importportfolio/index.php:50
+msgid "Bild"
 msgstr ""
 
-#: blocks/TestBlock/TestBlock.php:186 blocks/TestBlock/TestBlock.php:240
-msgid "Das Aufgabenblatt kann zur Zeit nicht bearbeitet werden."
+#: views/import/index.php:51 views/importportfolio/index.php:51
+msgid "Name und Beschreibung"
+msgstr ""
+
+#: views/import/index.php:52 views/importportfolio/index.php:52
+msgid "Version"
+msgstr ""
+
+#: views/import/index.php:53 views/importportfolio/index.php:53
+msgid "Bewertung"
+msgstr ""
+
+#: views/import/index.php:54 views/importportfolio/index.php:54
+msgid "Installieren"
+msgstr ""
+
+#: views/import/index.php:94 views/importportfolio/index.php:94
+msgid "Plugin installieren"
 msgstr ""
 
 #: models/mooc/db/CoursewareFactory.php:45
@@ -496,8 +526,4 @@ msgstr ""
 
 #: models/mooc/db/CoursewareFactory.php:76
 msgid "Name des HTML-Blocks"
-msgstr ""
-
-#: models/mooc/ui/Block.php:516
-msgid "Sie sind nicht berechtigt diesen Block zu editieren."
 msgstr ""
