@@ -9,52 +9,21 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlockUser extends Block
 {
-    const NAME = 'Notiz für alle';
+    const NAME = 'öffentliche Notiz';
 
     function initialize()
     {
         $this->defineField('content', \Mooc\SCOPE_BLOCK, '');
-
     }
 
     function student_view()
     {
-
-        $output = '';
-        $outputInfoDozent = 'Sie sind berechtigt diese Blöcke zu sehen';
-        $outputInfoStudent = 'Sie sind NICHT berechtigt diese Blöcke zu sehen';
-
-        if ($this->container['current_user']->canUpdate($this)) {
-          $output = "<script>console.log(' ". $outputInfoDozent ." ');</script>";
-
-          return array(
-            'content' => formatReady($this->content),
-            'logged_in_userid' => $GLOBALS["user"]->id,
-            'viewMode' => 'true',
-            'is_user' => 'true',
-          );
-
-        } else {
-          $output = "<script>console.log(' ". $outputInfoStudent ." ');</script>";
-
-          return array(
-            'content' => formatReady($this->content),
-            'logged_in_userid' => $GLOBALS["user"]->id,
-            'viewMode' => 'true',
-          );
-
-        }
-
-        echo $output;
-
         $this->setGrade(1.0);
-
+		return array('content' => formatReady($this->content));
     }
-
 
     function author_view()
     {
-
         $this->authorizeUpdate();
 
         if ($this->container['wysiwyg_refined']) {
@@ -62,12 +31,7 @@ class PortfolioBlockUser extends Block
         } else {
             $content = htmlReady($this->content);
         }
-        return array('content' => $content, 'editMode' => 'true');
-
-        if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
-        }
-
+        return compact('content');
     }
 
     /**
