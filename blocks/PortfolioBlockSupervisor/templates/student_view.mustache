@@ -13,12 +13,14 @@
 
         <div class="" style="clear:both;"></div>
 
-        <div class="eportfolioBlock ePortfolioContent">{{{content}}}</div>
+        
         {{^supervisor}}
+            <div class="eportfolioBlock">{{{content}}}</div>
             <h4>Notiz des Supervisors:</h4>
-            <div class="eportfolioBlock ePortfolioContent">{{{supervisorcontent}}}</div>
+            <div class="eportfolioBlock ePortfolioContentSupervisor">{{{supervisorcontent}}}</div>
         {{/supervisor}}
         {{#supervisor}}
+            <div class="eportfolioBlock ePortfolioContent">{{{content}}}</div>
             {{#supervisorcontentstored}}
                 <div class="messagebox messagebox_success supervisorcontentstored">Notiz gespeichert</div>
             {{/supervisorcontentstored}}
