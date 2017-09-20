@@ -39,7 +39,7 @@ define(['assets/js/student_view', 'assets/js/url', 'assets/js/templates'],
                         view.model.set('show_note', true);
                         view.model.set('supervisor', true);
                         view.model.set('supervisorcontentstored', true);
-                        view.$el.html(templates('PortfolioBlockSupervisor', 'student_view', { ...view.model.attributes }));
+                        view.$el.html(templates("PortfolioBlockSupervisor", 'student_view', _.clone(view.model.attributes)));
                         view.$(".supervisorcontentstored").delay(2000).slideUp();
                     },
 
