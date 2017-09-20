@@ -19,6 +19,9 @@
     <div class="content eportfolioBlock ePortfolioContent">{{{supervisorcontent}}}</div>
 {{/supervisor}}
 {{#supervisor}}
+    {{#supervisorcontentstored}}
+        <div class="messagebox messagebox_success supervisorcontentstored">Notiz gespeichert</div>
+    {{/supervisorcontentstored}}
     <textarea class="add_toolbar wysiwyg" name=supervisorcontent placeholder="Geben Sie hier Ihren Text ein">{{{supervisorcontent}}}</textarea>
     <div class="cw-button-box">
     <button name=save class=button>Speichern</button>

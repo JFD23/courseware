@@ -78,7 +78,10 @@ class PortfolioBlockSupervisor extends Block
           $this->content = (string) $data['content'];
         }
 
-        return array('content' => $this->content);
+        return array(
+            'content' => formatReady($this->content),
+            'supervisorcontent' => formatReady($this->supervisorcontent)
+        );
     }
     
     /**
@@ -97,10 +100,13 @@ class PortfolioBlockSupervisor extends Block
             } else {
               $this->supervisorcontent = (string) $data['supervisorcontent'];
             }
-
-            return ;
+            return array(
+                'content' => formatReady($this->content),
+                'supervisorcontent' => formatReady($this->supervisorcontent)
+            );
          } else {
             throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt diesen Block zu editieren.")); 
+            return false;
         }
     }
 

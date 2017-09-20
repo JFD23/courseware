@@ -1,5 +1,5 @@
-define(['assets/js/student_view', 'assets/js/url'],
-       function (StudentView, helper) {
+define(['assets/js/student_view', 'assets/js/url', 'assets/js/templates'],
+       function (StudentView, helper, templates) {
 
     'use strict';
 
@@ -32,8 +32,15 @@ define(['assets/js/student_view', 'assets/js/url'],
                 .callHandler(this.model.id, "savesupervisor", {supervisorcontent: new_val})
                 .then(
                     // success
-                    function () {
+                    function (resp) {
                         jQuery(event.target).addClass("accept");
+                        view.model.set('content', resp.content);
+                        view.model.set('supervisorcontent', resp.supervisorcontent);
+                        view.model.set('show_note', true);
+                        view.model.set('supervisor', true);
+                        view.model.set('supervisorcontentstored', true);
+                        view.$el.html(templates('PortfolioBlockSupervisor', 'student_view', { ...view.model.attributes }));
+                        view.$(".supervisorcontentstored").delay(2000).slideUp();
                     },
 
                     // error
