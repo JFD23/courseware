@@ -19,15 +19,23 @@ class PortfolioBlockSupervisor extends Block
 
     function student_view()
     {
-        $supervisorQuery  = \DBManager::get()->query("SELECT supervisor_id FROM eportfolio WHERE seminar_id = '$cid'")->fetchAll();
-        $supervisorId     = $supervisorQuery[0][0];
+        $cid = $this->container['cid'];
+    
+        $roles  = \DBManager::get()->query("SELECT supervisor_id, owner_id FROM eportfolio WHERE Seminar_id = '$cid'")->fetchAll(\PDO::FETCH_ASSOC);
+        $supervisorId     = $roles[0]['supervisor_id'];
+        $ownerId     = $roles[0]['owner_id'];
+  
+        //var_dump('supervisor: ' .$supervisorId);
+        //var_dump('owner: ' . $ownerId);
+        
+        
         if($this->getCurrentUser()->id == $supervisorId) {
             $supervisor = true;
         } else {
             $supervisor = false;
         }
         
-        if($this->container['current_user']->canUpdate($this)) {
+        if($this->getCurrentUser()->id == $ownerId) {
             $owner = true;
         } else {
             $owner = false;
@@ -95,7 +103,10 @@ class PortfolioBlockSupervisor extends Block
      */
     public function savesupervisor_handler(array $data)
     {
-        if ($this->getCurrentUser()->id == "e7a0a84b161f3e8c09b4a0a2e8a58147") {
+        $cid = $this->container['cid'];
+        $supervisorQuery  = \DBManager::get()->query("SELECT supervisor_id FROM eportfolio WHERE Seminar_id = '$cid'")->fetchAll();
+        $supervisorId     = $supervisorQuery[0][0];
+        if($this->getCurrentUser()->id == $supervisorId) {
             // second param in if-block is special case for uos. old studip with new wysiwyg
             if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
                 $this->supervisorcontent = \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify((string) $data['supervisorcontent']));
