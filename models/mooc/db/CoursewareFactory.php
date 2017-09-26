@@ -44,9 +44,20 @@ class CoursewareFactory
     {
         $courseware = $this->createGenericBlock($cid, 'Courseware', _cw('Courseware'));
 
-        $this->createChapter($courseware, _cw("Kapitel") . " 1");
-        $this->createChapter($courseware, _cw("Kapitel") . " 2");
+        $sem  = new \Seminar($cid);
 
+          $sem_status = $sem->getStatus();
+          foreach ($GLOBALS['SEM_TYPE'] as $id => $sem_type){ //get the id of ePortfolio Seminarclass
+            if ($sem_type['name'] == 'ePortfolio') {
+              $sem_type_id = $id;
+            }
+          }
+
+          if (!$sem_status == $sem_type_id) {
+            $this->createChapter($courseware, _cw("Kapitel") . " 1");
+            $this->createChapter($courseware, _cw("Kapitel") . " 2");
+          }
+          
         return $courseware;
     }
 
