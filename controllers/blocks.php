@@ -27,7 +27,7 @@ class BlocksController extends CoursewareStudipController {
                 $json['children'][] = get_class($child);
             }
 
-            // TODO: mlunzena: Warum sollten nicht-UI-BlÃ¶cke keine
+            // TODO: mlunzena: Warum sollten nicht-UI-Blöcke keine
             // Fields oder Grades haben?
             if ($ui_block) {
                 $json['fields'] = $ui_block->getFields();
@@ -138,9 +138,9 @@ class BlocksController extends CoursewareStudipController {
             throw new Trails_Exception(404);
         }
 
-        // FIXME: Ist es nÃ¶tig cid und block->seminar_id zu Ã¼berprÃ¼fen?
+        // FIXME: Ist es nötig cid und block->seminar_id zu überprüfen?
         if ($block->seminar_id === $this->plugin->getCourseId()) {
-            // hÃ¤h?
+            // häh?
         }
 
         if (!$this->plugin->getCurrentUser()->canRead($block)) {
