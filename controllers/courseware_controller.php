@@ -30,7 +30,7 @@ class CoursewareStudipController extends StudipController {
      * @param type $to
      * @return type
      */
-    function url_for($to)
+    function url_for($to = '')
     {
         $args = func_get_args();
 
@@ -161,12 +161,13 @@ class CoursewareStudipController extends StudipController {
 
     private function setDefaultPageTitle()
     {
+        $courseware = $this->container['current_courseware'];
         $title = Request::option('cid', false)
                ? $_SESSION['SessSemName']['header_line'] . ' - '
                : '';
 
-        $title .= $this->container['plugin_display_name'];
-
+        //$title .= $this->container['plugin_display_name'];
+        $title .= $courseware->title;
         \PageLayout::setTitle($title);
     }
 }

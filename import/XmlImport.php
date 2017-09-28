@@ -95,13 +95,9 @@ class XmlImport implements ImportInterface
             'author_name' => $user->getFullName(),
         );
 
-
         if (file_exists($sourceFile)) {
             // the file is part of the uploaded ZIP archive
             $document = \StudipDocument::createWithFile($sourceFile, $data);
-            print_r("Kommt bis hier //// ");
-            print_r($sourceFile);
-            print_r($data);
         } else {
             // the file is referenced by URL
             $document = new \StudipDocument();

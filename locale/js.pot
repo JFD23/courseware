@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-0919 14:15+0200\n"
+"POT-Creation-Date: 2017-09-0911 09:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,10 @@ msgstr ""
 msgid "Anzeigen"
 msgstr ""
 
-msgid "anzuzeigendes Aufgabenblatt auswählen"
+msgid "Audiodatei"
+msgstr ""
+
+msgid "Aufgabenblatt"
 msgstr ""
 
 msgid "Aufgabenblätter verwalten"
@@ -53,16 +56,31 @@ msgstr ""
 msgid "Autorenmodus"
 msgstr ""
 
+msgid "Beschreibung"
+msgstr ""
+
+msgid "Bildschirm"
+msgstr ""
+
 msgid "Block hinzufügen"
 msgstr ""
 
 msgid "Blubber muss in dieser Veranstaltung aktiviert sein."
 msgstr ""
 
+msgid "CC Lizenztyp angeben:"
+msgstr ""
+
 msgid "Danke! Sie haben alle Aufgaben gelöst und können nun mit dem nächsten Abschnitt fortfahren."
 msgstr ""
 
 msgid "Danke! Sie können nun mit dem nächsten Abschnitt fortfahren."
+msgstr ""
+
+msgid "Dateibereich"
+msgstr ""
+
+msgid "Dateityp"
 msgstr ""
 
 msgid "Der Aufgabentyp hat sich geändert. Bitte wenden Sie sich an Ihren Dozenten."
@@ -74,7 +92,19 @@ msgstr ""
 msgid "Dieser Abschnitt steht Ihnen erst zur Verfügung, sobald Sie die vorhergehenden Abschnitte erfolgreich abgeschloßen haben."
 msgstr ""
 
+msgid "Eine Datei ausw&auml;hlen"
+msgstr ""
+
+msgid "Einen Ordner ausw&auml;hlen"
+msgstr ""
+
+msgid "eingebettetes Video (iframe)"
+msgstr ""
+
 msgid "Einstellungen"
+msgstr ""
+
+msgid "Ende"
 msgstr ""
 
 msgid "Entfernen"
@@ -89,6 +119,12 @@ msgstr ""
 msgid "Es wurde bisher keine Evaluation erstellt!"
 msgstr ""
 
+msgid "Es wurde keine Audiodatei ausgewählt"
+msgstr ""
+
+msgid "Es wurde keine Datei ausw&auml;hlt"
+msgstr ""
+
 msgid "Es wurde noch kein Video eingetragen."
 msgstr ""
 
@@ -96,6 +132,9 @@ msgid "Export"
 msgstr ""
 
 msgid "Frage"
+msgstr ""
+
+msgid "für alle Displaygrößen"
 msgstr ""
 
 msgid "Für diese Frage haben Sie bereits eine Antwort abgegeben."
@@ -107,10 +146,19 @@ msgstr ""
 msgid "Für diesen Forumsblock muss das Forum in dieser Veranstaltung eingeschaltet werden..."
 msgstr ""
 
+msgid "für große Displays"
+msgstr ""
+
+msgid "für kleine Displays"
+msgstr ""
+
 msgid "Gesamtes Kapitel löschen"
 msgstr ""
 
 msgid "Gesamtes Unterkapitel löschen"
+msgstr ""
+
+msgid "Höhe"
 msgstr ""
 
 msgid "Ihre Lösung ist korrekt!"
@@ -126,6 +174,12 @@ msgid "Im aktuellen Aufgabenblatt sind nicht unterstützte Aufgabentypen enthalte
 msgstr ""
 
 msgid "Import"
+msgstr ""
+
+msgid "Infobox nach Download"
+msgstr ""
+
+msgid "Infobox vor Download"
 msgstr ""
 
 msgid "Kapitel einfügen"
@@ -155,7 +209,31 @@ msgstr ""
 msgid "Kommentiere dies"
 msgstr ""
 
+msgid "Kontrollelemente verstecken"
+msgstr ""
+
+msgid "Name des Übergabeparameters"
+msgstr ""
+
+msgid "Nutzerspezifische ID übergeben"
+msgstr ""
+
+msgid "openCast"
+msgstr ""
+
+msgid "Quelle"
+msgstr ""
+
+msgid "Quelle hinzufügen"
+msgstr ""
+
 msgid "Seitenblöcke aktivieren"
+msgstr ""
+
+msgid "Seitenverhältnis"
+msgstr ""
+
+msgid "sichtbar ab:"
 msgstr ""
 
 msgid "Sidebar für"
@@ -167,7 +245,16 @@ msgstr ""
 msgid "Speichern"
 msgstr ""
 
+msgid "Start"
+msgstr ""
+
 msgid "Studentenmodus"
+msgstr ""
+
+msgid "Titel"
+msgstr ""
+
+msgid "Titel des Blocks"
 msgstr ""
 
 msgid "Titel des Unterkapitels bearbeiten"
@@ -179,13 +266,40 @@ msgstr ""
 msgid "Unterkapitel sortieren"
 msgstr ""
 
+msgid "URL"
+msgstr ""
+
+msgid "Video automatisch starten"
+msgstr ""
+
+msgid "Video-Typ:"
+msgstr ""
+
 msgid "Vips muss in dieser Veranstaltung aktiviert sein."
+msgstr ""
+
+msgid "Vorschau"
 msgstr ""
 
 msgid "Was sollen die Lernenden bestätigen?"
 msgstr ""
 
+msgid "webAudio"
+msgstr ""
+
+msgid "Webvideo (URL)"
+msgstr ""
+
 msgid "weiter"
+msgstr ""
+
+msgid "Youtube"
+msgstr ""
+
+msgid "Zeit zurücksetzen"
+msgstr ""
+
+msgid "Zufallszeichen für Verschlüsselung"
 msgstr ""
 
 msgid "zurück"

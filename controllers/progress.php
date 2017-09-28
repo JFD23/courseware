@@ -9,6 +9,8 @@ class ProgressController extends CoursewareStudipController {
 
     public function index_action()
     {
+        PageLayout::addStylesheet($this->plugin->getPluginURL().'/assets/courseware.min.css');
+
         if (Navigation::hasItem('/course/mooc_progress')) {
             Navigation::activateItem("/course/mooc_progress");
         }
@@ -28,7 +30,7 @@ class ProgressController extends CoursewareStudipController {
             array());
 
         $grouped = array_reduce(
-            \Mooc\DB\Block::findBySQL('seminar_id = ? ORDER BY position', array($this->plugin->getCourseId())),
+            \Mooc\DB\Block::findBySQL('seminar_id = ? ORDER BY id, position', array($this->plugin->getCourseId())),
             function($memo, $item) {
                 $memo[$item->parent_id][] = $item->toArray();
                 return $memo;
