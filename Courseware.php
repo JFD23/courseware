@@ -57,6 +57,10 @@ class Courseware extends StudIPPlugin implements StandardPlugin
     {
         //PageLayout::setTitle($_SESSION['SessSemName']['header_line'] . ' - ' . $this->getPluginname());
         PageLayout::addStylesheet($this->getPluginURL().'/assets/style.css');
+        PageLayout::addScript($this->getPluginURL() . '/assets/js/eportfolio.js');
+        PageLayout::addStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css');
+        PageLayout::addStylesheet($this->getPluginURL().'/assets/animate.css');
+        PageLayout::addStylesheet($this->getPluginURL().'/assets/eportfolio.css');
         PageLayout::setHelpKeyword("MoocIP.Courseware"); // Hilfeseite im Hilfewiki
         $this->getHelpbarContent();
     }
