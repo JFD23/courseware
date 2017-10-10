@@ -1,0 +1,11 @@
+#flex-header,
+.sticky-wrapper,
+#layout_footer,
+.helpbar-container
+{
+    display:none !important;
+}
+body {
+    background-image: none !important;
+    background-color: #fff !important;
+}
