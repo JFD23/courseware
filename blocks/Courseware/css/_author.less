@@ -18,6 +18,8 @@
 
     select {
         width: 30.5em;
+        height: unset;
+        padding: 0.5em;
     }
     
     input[type='checkbox'],
@@ -28,5 +30,28 @@
     .cw-button-box {
         text-align: right;
         padding: 1em;
+    }
+}
+
+/* sidebar special */
+.cw-sidebar {
+    .block-content:not([data-view = 'student']) {
+        label {
+            padding: 1em 0.5em 0.5em 0.5em;
+        }
+
+        select {
+            width: 230px;
+            margin-left: 0.5em;
+        }
+
+        input {
+            width: 224px;
+            margin-left: 0.5em;
+        }
+
+        input[type=checkbox] {
+            width: 12px;
+        }
     }
 }

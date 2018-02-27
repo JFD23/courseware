@@ -21,7 +21,6 @@ class ImportController extends CoursewareStudipController
         Navigation::activateItem('course/mooc_courseware');
     }
 
-
     public function index_action()
     {
         $this->errors = array();
@@ -89,7 +88,8 @@ class ImportController extends CoursewareStudipController
         return true;
     }
 
-    private function installModule($filename) {
+    private function installModule($filename)
+    {
         // create a temporary directory
         $tempDir = $GLOBALS['TMP_PATH'].'/'.uniqid();
         mkdir($tempDir);
@@ -98,13 +98,19 @@ class ImportController extends CoursewareStudipController
         if ($this->validateUploadFile($tempDir, $this->errors)) {
             $courseware = $this->container['current_courseware'];
             $importer = new XmlImport($this->plugin->getBlockFactory());
-            $importer->import($tempDir, $courseware);
-
-            $this->redirect(PluginEngine::getURL($this->plugin, array(), 'courseware'));
+            $redirect = true;
+            try {
+                $importer->import($tempDir, $courseware);
+            } catch (Exception $e){
+                $this->errors[] = $e;
+                $redirect = false;
+            }
+            if($redirect){
+                $this->redirect(PluginEngine::getURL($this->plugin, array(), 'courseware'));
+            }
         }
 
         $this->deleteRecursively($tempDir);
-
     }
 
     private function deleteRecursively($path)

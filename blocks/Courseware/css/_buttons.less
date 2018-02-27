@@ -1,8 +1,8 @@
 // ***** BUTTON STYLE *****
-
 .chapters > .controls > button,
 .chapters > .chapter > .subchapters > .controls > button,
-.active-subchapter > .controls > button {
+.active-subchapter > .controls > button,
+.chapters > .selected > .subchapters > .selected > .sections > .controls > button{ 
   .courseware-btn;
   margin: 4px 0px 0px;
   width: 90%;
@@ -34,30 +34,37 @@ button {
   &.add-chapter,
   &.add-subchapter,
   &.add-section {
-    background-image: url("@{blocks-icons-dir}/blue/add.svg");
+    .assets-bg-icon("blue/add.svg");
     background-position: 6px center;
   }
 
   &.init-sort-chapter,
   &.init-sort-subchapter,
   &.init-sort-section {
-    background-image: url("@{blocks-icons-dir}/blue/ranking.svg");
-    background-position: 6px 6px;
+    background-image: url("../../assets/images/icons/blue/arr_1sort.svg");
+    background-position: 6px center;
   }
 
   &.stop-sort-chapter,
   &.stop-sort-subchapter,
   &.stop-sort-section {
-    background: url("@{blocks-icons-dir}/blue/accept.svg") 6px center no-repeat #E9E9E9;
+    .assets-bg-icon("blue/accept.svg");
+    background-position: 6px center;
+    background-repeat: no-repeat;
+    background-color: #E9E9E9;
     display: none;
   }
   &.activate-aside-section {
-    background-image: url("@{blocks-icons-dir}/blue/billboard.svg");
+    .assets-bg-icon("blue/check-circle-full.svg");
+    background-position: 6px center;
+  }
+  &.deactivate-aside-section {
+    .assets-bg-icon("blue/decline-circle-full.svg");
     background-position: 6px center;
   }
 
   &.activate-aside-section.loading {
-    background-image: url("@{blocks-images-dir}/ajax_indicator_small.gif");
+    .ajax-indicator-bg-icon();
   }
 }
 
@@ -69,4 +76,8 @@ a {
     background-image: none;
     background-color: #e9e9e9;
   }
+}
+
+.chapters > .selected > .subchapters > .selected > .sections > li > .edit-structure > form >.hasDatepicker {
+    display: none;
 }

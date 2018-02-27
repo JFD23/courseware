@@ -1,55 +1,61 @@
-<?
+<?php
+
 namespace Mooc\UI\Section;
 
 use Mooc\UI\Block;
-use Mooc\UI\Errors\AccessDenied;
 use Mooc\UI\Errors\BadRequest;
-use \Mooc\UI\Courseware\Courseware;
+use Mooc\UI\Courseware\Courseware;
 
 /**
  * @property bool   $visited
  * @property string $icon
  */
-class Section extends Block {
-
-    const ICON_CHAT    = 'chat';
-    const ICON_VIDEO   = 'video';
-    const ICON_AUDIO   = 'audio';
-    const ICON_TASK    = 'task';
+class Section extends Block
+{
+    const ICON_CHAT = 'chat';
+    const ICON_CODE = 'code';
+    const ICON_VIDEO = 'video';
+    const ICON_AUDIO = 'audio';
+    const ICON_GALLERY = 'gallery';
+    const ICON_TASK = 'task';
+    const ICON_SEARCH = 'search';
     const ICON_DEFAULT = 'document';
 
     // definition of precedence of icons
     // larger array index -> higher precedence
     // thus ICON_VIDEO has the highest precedence
-    private static $icon_precedences = array(self::ICON_DEFAULT, self::ICON_CHAT, self::ICON_TASK, self::ICON_VIDEO, self::ICON_AUDIO);
+    private static $icon_precedences = array(self::ICON_DEFAULT, self::ICON_CHAT, self::ICON_TASK, self::ICON_VIDEO, self::ICON_AUDIO, self::ICON_CODE, self::ICON_SEARCH, self::ICON_GALLERY);
 
     // mapping of block types to icons
     private static $map_blocks_to_icons = array(
-        'BlubberBlock' => self::ICON_CHAT,
-        'ForumBlock'   => self::ICON_CHAT,
-        'VideoBlock'   => self::ICON_VIDEO,
-        'AudioBlock'   => self::ICON_AUDIO,
-        'TestBlock'    => self::ICON_TASK
+        'BlubberBlock'  => self::ICON_CHAT,
+        'ForumBlock'    => self::ICON_CHAT,
+        'VideoBlock'    => self::ICON_VIDEO,
+        'AudioBlock'    => self::ICON_AUDIO,
+        'TestBlock'     => self::ICON_TASK,
+        'SearchBlock'   => self::ICON_SEARCH,
+        'CodeBlock'     => self::ICON_CODE,
+        'GalleryBlock'  => self::ICON_GALLERY,
     );
 
-    function initialize()
+    public function initialize()
     {
         $this->defineField('visited', \Mooc\SCOPE_USER, false);
-        $this->defineField('icon',    \Mooc\SCOPE_BLOCK, self::ICON_DEFAULT);
+        $this->defineField('icon', \Mooc\SCOPE_BLOCK, self::ICON_DEFAULT);
     }
 
-    function student_view($context = array())
+    public function student_view($context = array())
     {
         if (!$this->isAuthorized()) {
             return array('inactive' => true);
         }
 
-        if (!$this->visited) {
+        if (!$this->container['current_user']->isNobody() && !$this->visited) {
             $this->visited = true;
         }
 
-        $icon    = $this->icon;
-        $title   = $this->title;
+        $icon = $this->icon;
+        $title = $this->title;
         $visited = $this->visited;
 
         $blocks = $this->traverseChildren(
@@ -57,41 +63,43 @@ class Section extends Block {
                 $json = $child->toJSON();
                 $json['block_content'] = $child->render('student', $context);
                 $json['view_name'] = 'student';
+
                 return $json;
             }
         );
-
+        foreach ($blocks as &$block){
+            $block['make_date'] = date("d.n.Y",$block['mkdate']);
+        }
         // block adder
-        $content_block_types = $this->getBlockTypes();
-
-        return compact('blocks', 'content_block_types', 'icon', 'title', 'visited');
+        $content_block_types_basic = $this->getBlockTypes()['basic_blocks'];
+        $content_block_types_advanced = $this->getBlockTypes()['advanced_blocks'];
+        // TODO: if this course is an e-portfolio course
+        $content_block_types_eportfolio = $this->getBlockTypes()['eportfolio_blocks'];
+        
+        return compact(
+            'blocks',
+            'content_block_types_basic',
+            'content_block_types_advanced',
+            'content_block_types_eportfolio',
+            'icon',
+            'title',
+            'visited'
+        );
     }
 
-    /**
-     * View rendering buttons to add new blocks.
-     *
-     * @return array The available block types
-     */
-    function block_types_view()
+    public function add_content_block_handler($data)
     {
-        $this->authorizeUpdate();
-
-        return array('content_block_types' => $this->getBlockTypes());
-    }
-
-    function add_content_block_handler($data) {
-
         if (!$this->container['current_user']->canCreate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke anzulegen."));
+            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt Blöcke anzulegen.'));
         }
 
         if (!isset($data['type'])) {
-            throw new BadRequest("Type required.");
+            throw new BadRequest('Type required.');
         }
 
         $types = $this->getBlockFactory()->getContentBlockClasses();
         if (!in_array($data['type'], $types)) {
-            throw new BadRequest("Wrong type.");
+            throw new BadRequest('Wrong type.');
         }
 
         $className = '\Mooc\UI\\'.$data['type'].'\\'.$data['type'];
@@ -103,10 +111,10 @@ class Section extends Block {
         $block = new \Mooc\DB\Block();
         $block->setData(array(
             'seminar_id' => $this->_model->seminar_id,
-            'parent_id'  => $this->_model->id,
-            'type'       => $data['type'],
-            'sub_type'   => $data['sub_type'],
-            'title'      => "Ein weiterer " . $data['type']
+            'parent_id' => $this->_model->id,
+            'type' => $data['type'],
+            'sub_type' => $data['sub_type'],
+            'title' => 'Ein weiterer '.$data['type'],
         ));
 
         $block->store();
@@ -121,26 +129,26 @@ class Section extends Block {
         return $data;
     }
 
-    function remove_content_block_handler($data) {
-
+    public function remove_content_block_handler($data)
+    {
         if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw("Sie sind nicht berechtigt Blöcke zu löschen."));
+            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt Blöcke zu löschen.'));
         }
 
         if (!isset($data['child_id'])) {
-            throw new BadRequest("Child ID required");
+            throw new BadRequest('Child ID required');
         }
 
         $child = $this->_model->children->findOneBy('id', (int) $data['child_id']);
         if (!$child) {
-            throw new BadRequest("No such child");
+            throw new BadRequest('No such child');
         }
 
         $child->delete();
 
         $this->refreshIcon();
 
-        return array("status" => "ok");
+        return array('status' => 'ok');
     }
 
     /**
@@ -174,11 +182,9 @@ class Section extends Block {
         }
     }
 
-
     /////////////////////
     // PRIVATE HELPERS //
     /////////////////////
-
 
     /**
      * Returns the available block types.
@@ -205,30 +211,52 @@ class Section extends Block {
             $subTypes = call_user_func(array($className, 'getSubTypes'));
 
             if (count($subTypes) > 0) {
-                foreach ($subTypes as $subType => $name)  {
-
+                foreach ($subTypes as $subType => $name) {
                     if (!$className::additionalInstanceAllowed($this->container, $this, $subType)) {
                         continue;
                     }
-
-                    $blockTypes[] = array(
-                        'type'     => $type,
+                    $name = $readableName.' ('.$name.')';
+                    $blockTypes[$name] = array(
+                        'type' => $type,
                         'sub_type' => $subType,
-                        'name'     => $readableName.' ('.$name.')'
+                        'name' => $name
                     );
                 }
             } else {
                 if ($className::additionalInstanceAllowed($this->container, $this)) {
-                    $blockTypes[] = array(
-                        'type'     => $type,
+                    $name = $readableName;
+                    $blockTypes[$name] = array(
+                        'type' => $type,
                         'sub_type' => null,
-                        'name'     => $readableName
+                        'name' => $name
                     );
                 }
             }
         }
+        ksort($blockTypes);
+        $basic_blocks = array();
+        $advanced_blocks = array();
+        $eportfolio_blocks = array();
+        foreach($blockTypes as $key => $value){
+            switch ($value['type']) {
+                case 'HtmlBlock':
+                case 'VideoBlock':
+                case 'PostBlock':
+                case 'TestBlock':
+                    array_push($basic_blocks, $value);
+                    break;
+                case 'PortfolioBlock':
+                case 'PortfolioBlockSupervisor':
+                case 'PortfolioBlockUser':
+                    array_push($eportfolio_blocks, $value);
+                    break;
+                default:
+                    array_push($advanced_blocks, $value);
+            }
 
-        return $blockTypes;
+        }
+
+        return array('basic_blocks' =>$basic_blocks, 'advanced_blocks' => $advanced_blocks, 'eportfolio_blocks' => $eportfolio_blocks);
     }
 
     private function refreshIcon()
@@ -243,70 +271,11 @@ class Section extends Block {
 
             $precedence = array_search($icon, self::$icon_precedences);
             if ($precedence > $highest_precedence) {
-                $highest_icon       = $icon;
+                $highest_icon = $icon;
                 $highest_precedence = $precedence;
             }
         }
         $this->icon = $highest_icon;
     }
 
-
-    // check for user's authorization
-    private function isAuthorized()
-    {
-
-        // on sequential courseware progression a student may only
-        // access this section if he completed this or the previous
-        // sub/chapter
-        if (!$this->container['current_user']->canUpdate($this)) {
-            $courseware = $this->container['current_courseware'];
-            if ($courseware->getProgressionType() === Courseware::PROGRESSION_SEQ
-                && !$this->checkSeqCompletion()) {
-
-                return false;
-            }
-        }
-
-        // else user may access this section
-        return true;
-    }
-
-    private function checkSeqCompletion()
-    {
-        $uid = $this->container['current_user_id'];
-        $sub = $this->_model->parent;
-
-        // TODO: solve in a more elegant way
-        if (!$sub) {
-            return true;
-        }
-        // proceed if this subchapter has been completed by this user
-        if ($sub->hasUserCompleted($uid)) {
-            return true;
-        }
-
-
-        // else check the previous (sub)chapter for completion
-        else {
-
-            // get previous subchapter
-            $previous = $sub->previousSibling();
-
-            // if this section's subchapter is the first of the
-            // chapter, there is no previous subchapter. Get the
-            // previous chapter instead.
-            if (!$previous) {
-                $previous = $sub->parent->previousSibling();
-            }
-
-            // if there is no previous chapter, this section is
-            // the very first
-            if (!$previous) {
-                return true;
-            }
-
-            // else check the previous (sub)chapter for completion
-            return $previous->hasUserCompleted($uid);
-        }
-    }
 }

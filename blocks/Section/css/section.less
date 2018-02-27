@@ -1,5 +1,5 @@
-@import '../../../assets/variables';
-@import '../../../assets/mixins';
+@import '../../../assets/less/variables';
+@import '../../../assets/less/mixins';
 
 section#courseware {
 
@@ -22,7 +22,6 @@ section#courseware {
     // end move
   }
 
-
   // ***** Title *****
   & > .title {
     h1 {
@@ -36,11 +35,11 @@ section#courseware {
     }
 
     &.loading h1 {
-      background: url("@{blocks-images-dir}/ajax_indicator_small.gif") center left no-repeat;
+      .ajax-indicator-bg-icon();
+      background: center left no-repeat;
       padding-left: 20px;
     }
   }
-
 
   // ***** Blocks *****
   section.block {
@@ -48,7 +47,7 @@ section#courseware {
     min-height: 1em;
     line-height: 20px;
     display: block;
-    margin-bottom: 3em;
+    margin-bottom: 1.5em;
 
     &::before {
       color: #ccc;
@@ -61,18 +60,19 @@ section#courseware {
     }
 
     &.loading {
-      background: url("@{blocks-images-dir}/ajax_indicator_small.gif") center center no-repeat;
+      .ajax-indicator-bg-icon();
+      background: center center no-repeat;
 
       .block-content, .controls {
         visibility: hidden;
       }
     }
 
-
     div.controls {
       background-color: #eee;
       text-align: right;
       overflow: hidden;
+      padding: 0.7em;
 
       span.type {
         margin-left: 5px;
@@ -81,13 +81,15 @@ section#courseware {
 
       button {
         .btn-base();
+        width: 24px;
         background-color: transparent;
       }
 
-      button.raise  { .bgImg(arr_2up, grey); }
-      button.lower  { .bgImg(arr_2down, grey); }
-      button.author { .bgImg(edit, grey); }
-      button.trash  { .bgImg(trash, grey); }
+      button.raise  { .bgImg(arr_2up, grey, 20); }
+      button.lower  { .bgImg(arr_2down, grey, 20); }
+      button.author { .bgImg(edit, grey, 20); }
+      button.trash  { .bgImg(trash, grey, 20); }
+      button.info   { .bgImg(info, grey, 20); cursor: help;}
     }
 
     & + .no-content {
@@ -108,15 +110,21 @@ section#courseware {
     .styled-select {
         float:left;
         margin-right: 5px;
-        background: #eee url("../../../../assets/images/icons/blue/arr_1down.svg") no-repeat scroll right 10px center;
+        .assets-bg-icon("blue/arr_1down.svg");
+        background:  #eee no-repeat scroll right 10px center;
         border: 1px solid #d0d0d0;
         border-radius: 2px;
         height: 34px;
         overflow: hidden;
-        width: (@sidebar-width -50);
+        width: (@sidebar-width - 50);
+
         > select {
             background: transparent;
-            width: (@sidebar-width -50);
+            .assets-bg-icon("blue/arr_1down.svg");
+            background-repeat: no-repeat;
+            background-position-x: right+5px;
+            background-position-y: 50%;
+            width: (@sidebar-width - 50);
             padding: 5px;
             font-size: 16px;
             line-height: 1;
@@ -124,6 +132,11 @@ section#courseware {
             border-radius: 0;
             height: 34px;
             -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        > select::-ms-expand {
+            display: none;
         }
     }
     select, button.add-block {
@@ -137,44 +150,43 @@ section#courseware {
       margin: 0;
       width: initial;
       text-align: left;
-
-      background-image: url("@{blocks-icons-dir}/blue/add.svg");
+      .assets-bg-icon("blue/add.svg");
       background-position: 6px center;
       padding-left: 28px;
 
       &.loading {
-        background-image: url("@{blocks-images-dir}/ajax_indicator_small.gif");
+        .ajax-indicator-bg-icon();
         background-position: 10px center;
       }
     }
   }
 
   .edit-section {
-
     input {
       .section-title();
     }
 
     button {
       .btn-base();
+      background-position: center center;
+      background-repeat: no-repeat;
 
       &.cancel {
-        background: url("@{blocks-icons-dir}/grey/decline.svg") center center no-repeat;
+        .assets-bg-icon("grey/decline.svg");
         right: 20px;
       }
 
       &.ok {
-        background: url("@{blocks-icons-dir}/grey/accept.svg") center center no-repeat;
+        .assets-bg-icon("grey/accept.svg");
         right: 0;
       }
     }
   }
 }
 
-
 &.view-author .aside-section section.block,
 &.view-author .active-section section.block {
-  box-shadow: 0px 0px 3px 3px rgba(0,0,0,0.1);
+  border: solid thin #ccc;
   padding: 0px;
 
   .block-content {
@@ -186,22 +198,20 @@ section#courseware {
   }
 
   &:hover {
-    box-shadow: 0px 0px 3px 3px rgba(0,0,0,0.3);
+    border: solid thin #888;
   }
 }
 
-
 button.init-sort-block {
-  background-image: url("@{blocks-icons-dir}/blue/ranking.svg");
+  .assets-bg-icon("blue/ranking.svg");
   background-position: 6px 2px;
 }
 
 button.stop-sort-block {
-  background-image: url("@{blocks-icons-dir}/blue/accept.svg");
+  .assets-bg-icon("blue/accept.svg");
   background-position: 6px center;
   display: none;
 }
-
 
 &.view-student {
   .active-section, .aside-section {
@@ -211,12 +221,18 @@ button.stop-sort-block {
   }
 }
 
-
 //////////////////
 // ASIDE STYLES //
 //////////////////
 
 .aside-section {
+    width: unset;
+    padding-top: 0;
+    margin: 7px 5px 0;
+        
+    > section.block {
+        margin-bottom: 0.75em;
+    }
 
   // do not show section's title
   > .title {
@@ -233,7 +249,6 @@ button.stop-sort-block {
 }
 
 &.view-student .aside-section {
-
   // hide header of aside sections unless authoring
   > header {
     display: none;

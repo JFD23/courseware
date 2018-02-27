@@ -9,7 +9,7 @@ use Mooc\UI\Section\Section;
  */
 class DiscussionBlock extends Block
 {
-    const NAME = 'Diskussion';
+    const NAME = 'Blubber-Diskussion';
 
     public static function additionalInstanceAllowed($container, Section $section, $subType = null)
     {
@@ -23,12 +23,18 @@ class DiscussionBlock extends Block
 
     function student_view()
     {
+        if (!$this->isAuthorized()) {
+            return array('inactive_block' => true);
+        }
         // cannot do anything withough blubber activated in this course
         if ($inactive = !self::blubberActivated($this)) {
             return compact('inactive');
         }
-
-        return array('threads' => $this->getThreadsOfUser());
+        // TODO How should we grade this block when the observer is not enabled???
+        if ($not_observed = !self::coursewareObserverActivated($this)) {
+            $this->setGrade(1.0);
+        }
+        return array('threads' => $this->getThreadsOfUser(), 'isNobody' => $this->container['current_user']->isNobody());
     }
 
     function author_view()
@@ -174,5 +180,13 @@ class DiscussionBlock extends Block
         $plugin_manager = \PluginManager::getInstance();
         $plugin_info = $plugin_manager->getPluginInfo('Blubber');
         return $plugin_manager->isPluginActivated($plugin_info['id'], $block->getModel()->seminar_id);
+    }
+    
+    // is the CoursewareObserver plugin activated
+    private static function coursewareObserverActivated($block)
+    {
+        $plugin_manager = \PluginManager::getInstance();
+        $plugin_info = $plugin_manager->getPluginInfo('CoursewareObserver');
+        return $plugin_info["enabled"];
     }
 }

@@ -1,28 +1,90 @@
 <section
   id=courseware
-  class="view-student{{#user_may_author}} user-may-author{{/user_may_author}} loading"
+  class="view-student{{#user_may_author}} user-may-author{{/user_may_author}}{{#user_is_nobody}} user-is-nobody{{/user_is_nobody}} loading"
   data-blockid="{{courseware.id}}"
   data-type=Courseware>
 
-  <nav class=breadcrumb>
+  <nav class="breadcrumb">
     <ul>
       {{#active_chapter}}
-        <li><a href="#">{{#titleize}}{{title}}{{/titleize}}</a></li>
+        <li><span>{{#titleize}}{{title}}{{/titleize}}</span></li>
       {{/active_chapter}}
       {{#active_subchapter}}
-        <li>» <a href="#">{{#titleize}}{{title}}{{/titleize}}</a></li>
+        <li> <span class="breadcrumb-subchapter">{{#titleize}}{{title}}{{/titleize}}</span></li>
       {{/active_subchapter}}
     </ul>
   </nav>
 
-  <div class=mode-switch>
-      <button class="student" data-title="{{#i18n}}Studentenmodus{{/i18n}}"></button>
-      <button class="author" data-title="{{#i18n}}Autorenmodus{{/i18n}}"></button>
-  </div>
-
-  <aside>
+  <aside class="cw-sidebar">
+    <div class="cw-sidebar-image">
+        <span class="cw-sidebar-image-title">{{cw_title}}</span>
+    </div>
+    <nav class="cw-navigation">
+          <p class="cw-navigation-header">
+            Navigation
+          </p>
+        {{#user_is_teacher}}
+          <ul class="cw-navigation-teacher">
+              <li class="cw-navigation-active">
+                <a class="cw-navigation-courseware" href="#">
+                  {{cw_title}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-news" href="{{#plugin_url}}courseware/news{{/plugin_url}}">
+                  {{#i18n}}Letzte Änderungen{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-settings" href="{{#plugin_url}}courseware/settings{{/plugin_url}}">
+                  {{#i18n}}Einstellungen{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-progressoverview" href="{{#plugin_url}}cpo{{/plugin_url}}">
+                  {{#i18n}}Fortschrittsübersicht{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-postoverview" href="{{#plugin_url}}cpo/postoverview{{/plugin_url}}">
+                  {{#i18n}}Diskussionsübersicht{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-export" href="{{#plugin_url}}export{{/plugin_url}}">
+                  {{#i18n}}Export{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-import" href="{{#plugin_url}}import{{/plugin_url}}">
+                  {{#i18n}}Import{{/i18n}}
+                </a>
+              </li>
+          </ul>
+        {{/user_is_teacher}}
+        {{^user_is_teacher}}
+          <ul class="cw-navigation-student">
+              <li class="cw-navigation-active">
+                <a class="cw-navigation-courseware" href="#">
+                  {{cw_title}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-news" href="{{#plugin_url}}courseware/news{{/plugin_url}}">
+                  {{#i18n}}Letzte Änderungen{{/i18n}}
+                </a>
+              </li>
+              <li>
+                <a class="cw-navigation-progress" href="{{#plugin_url}}progress{{/plugin_url}}">
+                  {{#i18n}}Fortschrittsübersicht{{/i18n}}
+                </a>
+              </li>
+          </ul>
+        {{/user_is_teacher}}
+      </nav>
+    
     <ol class=chapters>
-
+        <p class="chapters-header">{{#i18n}}Inhalt{{/i18n}}</p>
       {{#chapters}}
         {{> chapter}}
       {{/chapters}}
@@ -35,20 +97,12 @@
         {{^active_chapter.aside_section}}
           <button class=activate-aside-section>{{#i18n}}Seitenblöcke aktivieren{{/i18n}}</button>
         {{/active_chapter.aside_section}}
-
-        <a class="button export" href="{{#plugin_url}}export{{/plugin_url}}">
-          {{#i18n}}Export{{/i18n}}
-        </a>
-
-        <a class="button import" href="{{#plugin_url}}import{{/plugin_url}}">
-          {{#i18n}}Import{{/i18n}}
-        </a>
-
-        <a class="button settings" href="{{#plugin_url}}courseware/settings{{/plugin_url}}">
-          {{#i18n}}Einstellungen{{/i18n}}
-        </a>
+        {{#active_chapter.aside_section}}
+            <button class=deactivate-aside-section data-type=Chapter>{{#i18n}}Seitenblöcke entfernen{{/i18n}}</button>
+        {{/active_chapter.aside_section}}
 
       </li>
+      
     </ol>
     {{#active_chapter}}
       {{#aside_section}}
@@ -92,11 +146,23 @@
       {{/aside_section}}
     {{/active_subchapter}}
   </aside>
-
-  {{> active_subchapter}}
-
+<button class="mobile-show-nav-button"></button>  
+  {{#show_section_nav}}
+    {{^sections_as_chapters}}
+      {{> active_subchapter}}
+    {{/sections_as_chapters}}
+  {{/show_section_nav}}
+  
+  {{#user_is_teacher}}
+    <div class=mode-switch>
+      <button class="student" data-title="{{#i18n}}Studentenmodus{{/i18n}}"></button>
+      <button class="author" data-title="{{#i18n}}Autorenmodus{{/i18n}}"></button>
+    </div>
+  {{/user_is_teacher}}
+  
   {{#active_section}}
-    {{> active_section}}
-  {{/active_section}}
+        {{> active_section}}
+      {{/active_section}}
+
   <div class="clear"></div>
 </section>

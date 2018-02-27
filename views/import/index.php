@@ -3,7 +3,7 @@
 /** @var string[] $errors */
 
 if (count($errors) > 0) {
-    echo"<p>"._cw("Es sind Fehler aufgetreten:")."</p>";
+    echo"<p><b>"._cw("Es sind Fehler aufgetreten:")."</b></p>";
     echo '<ul>';
     foreach ($errors as $error):
         echo '<li>'.htmlReady($error).'</li>';
@@ -12,7 +12,7 @@ if (count($errors) > 0) {
 }
 ?>
 <p>&nbsp;</p>
-<p><?= _cw("Laden Sie eine Datei hoch, die Sie zuvor in einer MOOC.IP-Installation exportiert haben.")?></p>
+<p><?= _cw("Laden Sie eine Datei hoch, die Sie zuvor aus einer Courseware exportiert haben.")?></p>
 
 <p>&nbsp;</p>
 <form method="post" enctype="multipart/form-data">
@@ -26,7 +26,7 @@ if (count($errors) > 0) {
         ?>
     </div>
 </form>
-
+<!---
 <p>&nbsp;</p>
 <h2><?=_cw("Im Content-Marktplatz suchen")?></h2>
 <p>&nbsp;</p>
@@ -84,20 +84,20 @@ if (count($errors) > 0) {
                 </td>
                 <td class="plugin_score">
                     <? for ($i = 0; $i < $plugin['score']; ++$i): ?>
-                        <?= Assets::img('icons/16/grey/star.png') ?>
+                        <?= Assets::img('icons/grey/star.svg') ?>
                     <? endfor ?>
                 </td>
                 <td class="plugin_install">
                     <form method="post">
                         <input type="hidden" name="subcmd" value="install">
                         <input type="hidden" name="n" value="<?=htmlReady($name)?>">
-                        <?= Assets::input("icons/16/blue/install.png", array('type' => "image", 'class' => "middle", 'name' => "install", 'title' => _cw('Plugin installieren'))) ?>
+                        <?= Assets::input("icons/blue/install.svg", array('type' => "image", 'class' => "middle", 'name' => "install", 'title' => _cw('Plugin installieren'))) ?>
                     </form>
                 </td>
             </tr>
         <? endforeach ?>
     </table>
 <? endif ?>
-
+-->
 <p>&nbsp;</p>
 

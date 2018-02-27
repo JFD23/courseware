@@ -1,4 +1,5 @@
-<?
+<?php
+
 namespace Mooc\UI\Courseware;
 
 use Mooc\DB\Field;
@@ -10,18 +11,18 @@ use Mooc\UI\Errors\BadRequest;
 /**
  * @property \Mooc\DB\Block $lastSelected
  */
-class Courseware extends Block {
-
+class Courseware extends Block
+{
     const PROGRESSION_FREE = 'free';
-    const PROGRESSION_SEQ  = 'seq';
+    const PROGRESSION_SEQ = 'seq';
 
     // 'tutor' and 'dozent'  may edit courseware
-    const EDITING_PERMISSION_TUTOR  = 'tutor';
+    const EDITING_PERMISSION_TUTOR = 'tutor';
 
     // only 'dozent'  may edit courseware
     const EDITING_PERMISSION_DOZENT = 'dozent';
 
-    function initialize()
+    public function initialize()
     {
         $this->defineField('lastSelected', \Mooc\SCOPE_USER, null);
 
@@ -30,7 +31,7 @@ class Courseware extends Block {
 
         // FIXME: this must be stored somewhere else, see https://github.com/virtUOS/courseware/issues/16
         $this->defineField('discussionblock_activation', \Mooc\SCOPE_BLOCK, false);
-        
+
         // FIXME: this must be stored somewhere else, see https://github.com/virtUOS/courseware/issues/16
         $this->defineField('vipstab_visible', \Mooc\SCOPE_BLOCK, false);
 
@@ -38,26 +39,34 @@ class Courseware extends Block {
         $this->defineField('editing_permission', \Mooc\SCOPE_BLOCK, self::EDITING_PERMISSION_TUTOR);
 
         // FIXME: this must be stored somewhere else, see https://github.com/virtUOS/courseware/issues/16
-        $this->defineField('max_tries', \Mooc\SCOPE_BLOCK, -1); // -1 = infinity
+        $this->defineField('max_tries', \Mooc\SCOPE_BLOCK, 3); // -1 = infinity
+
+        $this->defineField('show_section_nav', \Mooc\SCOPE_BLOCK, true);
+
+        $this->defineField('sections_as_chapters', \Mooc\SCOPE_BLOCK, false);
     }
 
-    function student_view($context = array())
+    public function student_view($context = array())
     {
-        $this->lastSelected = $this->getSelected($context);
+        $lastSelected = $this->getSelected($context);
+
+        if (!$this->getCurrentUser()->isNobody()) {
+            $this->lastSelected = $lastSelected;
+        }
 
         /** @var \Mooc\DB\Block $courseware */
         /** @var \Mooc\DB\Block $chapter */
         /** @var \Mooc\DB\Block $subchapter */
-        $tree = $this->getPrunedChapterNodes(list($courseware, $chapter, $subchapter, $section) = $this->getSelectedPath($this->lastSelected));
+        $tree = $this->getPrunedChapterNodes(list($courseware, $chapter, $subchapter, $section) = $this->getSelectedPath($lastSelected));
 
         $active_section = array();
         if ($section && $this->getCurrentUser()->canRead($section)) {
             $active_section_block = $this->getBlockFactory()->makeBlock($section);
             $active_section = array(
-                'id'        => $section->id,
-                'title'     => $section->title,
+                'id' => $section->id,
+                'title' => $section->title,
                 'parent_id' => $subchapter->id,
-                'html'      => $active_section_block->render('student', $context)
+                'html' => $active_section_block->render('student', $context),
             );
         }
 
@@ -81,28 +90,37 @@ class Courseware extends Block {
         }
 
         $this->branchComplete($tree);
+        $cid = $this->container['cid'];
 
         return array_merge($tree, array(
-            'user_may_author'   => $this->getCurrentUser()->canUpdate($this->_model),
-            'section_nav'       => $section_nav,
-            'courseware'        => $courseware,
-            'active_chapter'    => $active_chapter,
-            'active_subchapter' => $active_subchapter,
-            'active_section'    => $active_section));
+            'user_is_nobody'        => $this->getCurrentUser()->isNobody(),
+            'user_may_author'       => $this->getCurrentUser()->canUpdate($this->_model),
+            'user_is_teacher'       => $this->getCurrentUser()->hasPerm($cid, 'tutor'),
+            'section_nav'           => $section_nav,
+            'courseware'            => $courseware,
+            'active_chapter'        => $active_chapter,
+            'active_subchapter'     => $active_subchapter,
+            'show_section_nav'      => $this->show_section_nav,
+            'sections_as_chapters'  => $this->sections_as_chapters,
+            'isSequential'          => $this->progression == 'seq',
+            'active_section'        => $active_section, 
+            'cw_title'              => $courseware->title
+            )
+        );
     }
 
-    function branchComplete(&$tree)
+    public function branchComplete(&$tree)
     {
-        $subchapters = &$tree["subchapters"];
+        $subchapters = &$tree['subchapters'];
         foreach ($subchapters as &$subchapter) {
-                $subchapterBlock = DbBlock::findOneBySQL("id = ?", array($subchapter["id"]));
-                $subchapter["complete"] = $this->subchapterComplete($subchapterBlock);
+            $subchapterBlock = DbBlock::findOneBySQL('id = ?', array($subchapter['id']));
+            $subchapter['complete'] = $this->subchapterComplete($subchapterBlock);
         }
     }
 
-    function subchapterComplete($subchapterblock)
+    public function subchapterComplete($subchapterblock)
     {
-        $uid= $this->getCurrentUser()->id;
+        $uid = $this->getCurrentUser()->id;
         foreach ($subchapterblock->children as $section) {
             foreach ($section->children as $block) {
                 $bid = $block->id;
@@ -112,18 +130,18 @@ class Courseware extends Block {
                 }
             }
         }
+
         return true;
     }
 
-    function add_structure_handler($data)
+    public function add_structure_handler($data)
     {
         // only authors may add more structure
         $parent = $this->requireUpdatableParent($data);
 
         // we need a title
-        if (!isset($data['title']) || !strlen($data['title']))
-        {
-            throw new BadRequest("Title required.");
+        if (!isset($data['title']) || !strlen($data['title'])) {
+            throw new BadRequest('Title required.');
         }
 
         $block = $this->createStructure($parent, $data);
@@ -131,23 +149,21 @@ class Courseware extends Block {
         return $block->toArray();
     }
 
-
-    function update_positions_handler($data)
+    public function update_positions_handler($data)
     {
         // only authors may add more structure
         $parent = $this->requireUpdatableParent($data);
 
         // we need some positions
-        if (!isset($data['positions']))
-        {
-            throw new BadRequest("Positions required.");
+        if (!isset($data['positions'])) {
+            throw new BadRequest('Positions required.');
         }
-        $new_positions = array_map("intval", $data['positions']);
-        $old_positions = array_map("intval", $parent->children->pluck("id"));
+        $new_positions = array_map('intval', $data['positions']);
+        $old_positions = array_map('intval', $parent->children->pluck('id'));
 
         if (sizeof($new_positions) !== sizeof($old_positions)
             || sizeof(array_diff($new_positions, $old_positions))) {
-            throw new BadRequest("Positions required.");
+            throw new BadRequest('Positions required.');
         }
 
         $parent->updateChildPositions($new_positions);
@@ -160,21 +176,21 @@ class Courseware extends Block {
     {
         // block_id is required
         if (!isset($data['block_id'])) {
-            throw new BadRequest("block_id is required.");
+            throw new BadRequest('block_id is required.');
         }
 
         // there must be such a block
         if (!$chap = \Mooc\DB\Block::find($data['block_id'])) {
-            throw new BadRequest("There is no such block.");
+            throw new BadRequest('There is no such block.');
         }
 
         // the block must be a Chapter or Subchapter
-        if (!in_array($chap->type, words("Chapter Subchapter"))) {
-            throw new BadRequest("Only chapters and subchapters may have aside sections.");
+        if (!in_array($chap->type, words('Chapter Subchapter'))) {
+            throw new BadRequest('Only chapters and subchapters may have aside sections.');
         }
 
-        $title = 'AsideSection for block ' . $data['block_id'];
-        $section = $this->createAnyBlock(NULL, 'Section', compact('title'));
+        $title = 'AsideSection for block '.$data['block_id'];
+        $section = $this->createAnyBlock(null, 'Section', compact('title'));
 
         // now store a link to this section
         $field = new Field(array($data['block_id'], '', 'aside_section'));
@@ -183,11 +199,12 @@ class Courseware extends Block {
         $status = $field->store();
 
         if (!$status) {
-            throw new \RuntimeException("Could not activate aside section.");
+            throw new \RuntimeException('Could not activate aside section.');
         }
 
         return array('status' => 'ok');
     }
+
     /**
      * {@inheritdoc}
      */
@@ -218,7 +235,6 @@ class Courseware extends Block {
         return 'http://moocip.de/schema/courseware/courseware-1.0.xsd';
     }
 
-
     // set type of course progression
     //
     // 'free': student may navigate to sub/chapters of choice
@@ -230,6 +246,7 @@ class Courseware extends Block {
     {
         if (in_array($type, array(self::PROGRESSION_FREE, self::PROGRESSION_SEQ))) {
             $this->progression = $type;
+
             return true;
         }
 
@@ -246,7 +263,7 @@ class Courseware extends Block {
     // set activation of the DiscussionBlock specific to this courseware
     public function setDiscussionBlockActivation($active)
     {
-        $active = !!$active;
+        $active = (bool) $active;
 
         // 1. activate Blubber plugin for this course
         $plugin_manager = \PluginManager::getInstance();
@@ -280,6 +297,7 @@ class Courseware extends Block {
     {
         if (in_array($perm_level, array(self::EDITING_PERMISSION_TUTOR, self::EDITING_PERMISSION_DOZENT))) {
             $this->editing_permission = $perm_level;
+
             return true;
         }
 
@@ -293,20 +311,44 @@ class Courseware extends Block {
         return $this->editing_permission;
     }
 
-    public function setMaxTries($tries) {
+    public function setMaxTries($tries)
+    {
         $this->max_tries = $tries;
     }
 
-    public function getMaxTries() {
+    public function getMaxTries()
+    {
         return $this->max_tries;
     }
-    
-    public function setVipsTabVisible($active) {
+
+    public function setVipsTabVisible($active)
+    {
         $this->vipstab_visible = $active;
     }
 
-    public function getVipsTabVisible() {
+    public function getVipsTabVisible()
+    {
         return $this->vipstab_visible;
+    }
+
+    public function setShowSectionNav($state)
+    {
+        $this->show_section_nav = $state;
+    }
+
+    public function getShowSectionNav()
+    {
+        return $this->show_section_nav;
+    }
+
+    public function setSectionsAsChapters($state)
+    {
+        $this->sections_as_chapters = $state;
+    }
+
+    public function getSectionsAsChapters()
+    {
+        return $this->sections_as_chapters;
     }
 
     ///////////////////////
@@ -320,17 +362,16 @@ class Courseware extends Block {
         if ($aside_field = Field::find(array($structure_block->id, '', 'aside_section'))) {
             if ($aside_block = \Mooc\DB\Block::find($aside_field->content)) {
                 return array(
-                    'id'        => $aside_block->id,
-                    'title'     => $aside_block->title,
+                    'id' => $aside_block->id,
+                    'title' => $aside_block->title,
                     'parent_id' => $structure_block->id,
-                    'html'      => $this->getBlockFactory()->makeBlock($aside_block)->render('student', $context)
+                    'html' => $this->getBlockFactory()->makeBlock($aside_block)->render('student', $context),
                 );
             }
         }
 
         return null;
     }
-
 
     private function getSelected($context)
     {
@@ -354,21 +395,25 @@ class Courseware extends Block {
         if ($subchapter) {
             $sections = $this->childrenToJSON($subchapter->children, $section->id, true);
         }
+
         return compact('chapters', 'subchapters', 'sections');
     }
+
     // get all chapters and the subchapters
     private function getChapterNodes()
     {
-            $nodes = array_reduce(
+        $nodes = array_reduce(
                 \Mooc\DB\Block::findInCourseByType($this->container['cid'], words('Chapter Subchapter')),
                 function ($memo, $item) {
                     if (!isset($memo[$item->parent_id])) {
                         $memo[$item->parent_id] = array();
                     }
                     $memo[$item->parent_id][$item->id] = $item;
+
                     return $memo;
                 },
                 array());
+
         return $nodes;
     }
 
@@ -380,6 +425,7 @@ class Courseware extends Block {
                 $result[] = $this->childToJSON($item, $selected, $showFields);
             }
         }
+
         return array_values(array_filter($result));
     }
 
@@ -403,6 +449,7 @@ class Courseware extends Block {
 
         $json['dom_title'] = $child->publication_date ? date('d.m.Y', $child->publication_date) : '';
         $json['selected'] = $selected == $child->id;
+
         return $json;
     }
 
@@ -417,6 +464,7 @@ class Courseware extends Block {
 
         $ancestors = $node->getAncestors();
         $ancestors[] = $node;
+
         return $ancestors;
     }
 
@@ -463,7 +511,7 @@ class Courseware extends Block {
         if ($block->type === 'Section') {
             // normal section
             if ($block->parent_id) {
-            return $block;
+                return $block;
             }
 
             // aside section
@@ -471,6 +519,7 @@ class Courseware extends Block {
                 // find aside's "parent" sub/chapter
                 // TODO: gruseliger Hack, um das Unter/Kapitel zu finden, in dem die Section eingehängt ist.
                 $field = current(\Mooc\DB\Field::findBySQL('user_id = "" AND name = "aside_section" AND json_data = ?', array(json_encode($block->id))));
+
                 return $field->block;
             }
         }
@@ -511,10 +560,10 @@ class Courseware extends Block {
         $structure_types = \Mooc\DB\Block::getStructuralBlockClasses();
         $index = array_search($parent->type, $structure_types);
         if (!$child_type = $structure_types[$index + 1]) {
-            throw new BadRequest("Unknown child type.");
+            throw new BadRequest('Unknown child type.');
         }
 
-        $method = "create" . $child_type;
+        $method = 'create'.$child_type;
 
         return $this->$method($parent, $data);
     }
@@ -523,6 +572,7 @@ class Courseware extends Block {
     {
         $chapter = $this->createAnyBlock($parent, 'Chapter', $data);
         $this->createSubchapter($chapter, array('title' => _cw('Unterkapitel 1')));
+
         return $chapter;
     }
 
@@ -530,6 +580,7 @@ class Courseware extends Block {
     {
         $subchapter = $this->createAnyBlock($parent, 'Subchapter', $data);
         $this->createSection($subchapter, array('title' => _cw('Abschnitt 1')));
+
         return $subchapter;
     }
 
@@ -542,11 +593,11 @@ class Courseware extends Block {
     {
         $block = new \Mooc\DB\Block();
         $block->setData(array(
-            'seminar_id'       => $this->_model->seminar_id,
-            'parent_id'        => is_object($parent) ? $parent->id : $parent,
-            'type'             => $type,
-            'title'            => $data['title'],
-            'publication_date' => $data['publication_date']
+            'seminar_id' => $this->_model->seminar_id,
+            'parent_id' => is_object($parent) ? $parent->id : $parent,
+            'type' => $type,
+            'title' => $data['title'],
+            'publication_date' => $data['publication_date'],
         ));
 
         $block->store();
@@ -560,10 +611,10 @@ class Courseware extends Block {
      *
      * @return array
      */
-    private function getNeighborSections($active_section)
+    public function getNeighborSections($active_section)
     {
         // next
-        for ($node = $active_section; !$next&& $node; $node = $node->parent) {
+        for ($node = $active_section; !$next && $node; $node = $node->parent) {
             $next = $node->nextSibling();
         }
         if (isset($next)) {
@@ -571,7 +622,7 @@ class Courseware extends Block {
         }
 
         // prev
-        for ($node = $active_section; !$prev&& $node; $node = $node->parent) {
+        for ($node = $active_section; !$prev && $node; $node = $node->parent) {
             $prev = $node->previousSibling();
         }
         if (isset($prev)) {
@@ -590,7 +641,6 @@ class Courseware extends Block {
         }
 
         return $files;
-
     }
 
     private function getFilesForSubChapter(\Mooc\DB\Block $subChapter)

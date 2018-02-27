@@ -5,10 +5,10 @@ ol.active-subchapter {
   li {
     display: block;
     float: left;
-    margin: 0px 1px 0px 0px;
+    margin: 0px 4px 0px 0px;
 
     & > a {
-      background-color: #eee;
+      background-color: #f3f3f3;
       background-size: 20px;
       color: transparent;
 
@@ -20,12 +20,20 @@ ol.active-subchapter {
       border-radius: 2px;
       overflow: hidden;
 
-      &[data-icon=""]         { .bgImg(info-small,   "blue", 24); }
-      &[data-icon="chat"]     { .bgImg(chat,       "blue", 24); }
-      &[data-icon="document"] { .bgImg(info-small,   "blue", 24); }
-      &[data-icon="task"]     { .bgImg(question,   "blue", 24); }
-      &[data-icon="video"]    { .bgImg(video,      "blue", 24); }
-      &[data-icon="audio"]    { .bgImg(play,      "blue", 24); }
+      &[data-icon=""]         { .bgImg(info-small,  "blue", 24); }
+      &[data-icon="chat"]     { .bgImg(chat,        "blue", 24); }
+      &[data-icon="document"] { .bgImg(info-small,  "blue", 24); }
+      &[data-icon="task"]     { .bgImg(question,    "blue", 24); }
+      &[data-icon="video"]    { .bgImg(video,       "blue", 24); }
+      &[data-icon="audio"]    { .bgImg(play,        "blue", 24); }
+      &[data-icon="code"]     { .bgImg(computer,    "blue", 24); }
+      &[data-icon="search"]   { .bgImg(search,      "blue", 24); }
+      &[data-icon="gallery"]  { 
+          background-image: url("../images/icons/blue/image.svg");
+          background-size: 24px;
+          background-position: center center;
+          background-repeat: no-repeat;
+       }
     }
 
     &:hover > a {
@@ -38,7 +46,7 @@ ol.active-subchapter {
       }
 
       & > a {
-        background-color: #f8f8f8;
+        background-color: #f3f3f3;
       }
     }
 
@@ -58,12 +66,20 @@ ol.active-subchapter {
       }
 
       & > a {
-        &[data-icon=""]         { .bgImg(info-small,   "white", 24); }
-        &[data-icon="chat"]     { .bgImg(chat,       "white", 24); }
-        &[data-icon="document"] { .bgImg(info-small,   "white", 24); }
-        &[data-icon="task"]     { .bgImg(question,   "white", 24); }
-        &[data-icon="video"]    { .bgImg(video,      "white", 24); }
-        &[data-icon="audio"]    { .bgImg(play,      "white", 24); }
+        &[data-icon=""]         { .bgImg(info-small,    "white", 24); }
+        &[data-icon="chat"]     { .bgImg(chat,          "white", 24); }
+        &[data-icon="document"] { .bgImg(info-small,    "white", 24); }
+        &[data-icon="task"]     { .bgImg(question,      "white", 24); }
+        &[data-icon="video"]    { .bgImg(video,         "white", 24); }
+        &[data-icon="audio"]    { .bgImg(play,          "white", 24); }
+        &[data-icon="code"]     { .bgImg(computer,      "white", 24); }
+        &[data-icon="search"]   { .bgImg(search,        "white", 24); }
+        &[data-icon="gallery"]  { 
+            background-image: url("../images/icons/white/image.svg");
+            background-size: 24px;
+            background-position: center center;
+            background-repeat: no-repeat;
+         }
       }
     }
 
@@ -78,7 +94,8 @@ ol.active-subchapter {
     }
 
     &.loading > a {
-      background: url("@{blocks-images-dir}/ajax_indicator_small.gif") center center no-repeat;
+      .ajax-indicator-bg-icon();
+      background: center center no-repeat;
     }
   }
 
@@ -89,7 +106,7 @@ ol.active-subchapter {
     width: @section-icon-width;
     height: @section-icon-height;
 
-    background-color: #bbb;
+    background-color: #c8c8c8;
     background-size: 20px;
     border-radius: 2px;
 
@@ -143,7 +160,6 @@ ol.active-subchapter {
     }
   }
 
-
   // ***** STICKY SECTION LIST *****
   &.stuck {
     position: fixed;
@@ -151,9 +167,7 @@ ol.active-subchapter {
     z-index: 500;
   }
 
-
   // ***** MISSING SECTION *****
-
   &[data-blockid=""] {
     button.add-section,
     button.init-sort-chapter,
@@ -167,9 +181,7 @@ ol.active-subchapter {
   }
 }
 
-
 // ***** EDITING SECTIONS *****
-
 .active-subchapter > li > .edit-structure {
   white-space: nowrap;
   margin-left: 4px;

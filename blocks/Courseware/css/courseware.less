@@ -1,5 +1,5 @@
-@import '../../../assets/variables';
-@import '../../../assets/mixins';
+@import '../../../assets/less/variables';
+@import '../../../assets/less/mixins';
 @import './_tooltip';
 
 button::-moz-focus-inner,
@@ -8,9 +8,14 @@ input::-moz-focus-inner {
   padding: 0;
 }
 
-#mooc-courseware-index {
+#courseware-index {
   #layout_container {
     position: relative;
+    
+    #layout_content {
+        margin-left: 0;
+        overflow: unset;
+    }
   }
 
   /* FIXME: hide sidebar for now */
@@ -21,10 +26,9 @@ input::-moz-focus-inner {
 
 section#courseware {
   /* CSS for the Courseware controls */
-
   position:relative;
   padding-left: @sidebar-overall-width;
-  max-width: @courseware-max-width;
+  max-width: @content-max-width;
 
   ol.chapters, ol.subchapters, ol.active-subchapter {
     list-style: none;
@@ -41,4 +45,11 @@ section#courseware {
   @import './_controls';
   @import './_buttons';
   @import './_author';
+  @import './_sidebar';
+  
 }
+.mobile-show-nav-button {
+    display:none;
+}
+@import './_mobile';
+

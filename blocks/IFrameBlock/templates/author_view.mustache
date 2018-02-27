@@ -1,3 +1,13 @@
+{{#loading_denyed}}
+    <div class="messagebox messagebox_error">
+        {{#i18n}}Die gewählte Seite verbietet eine Einbindung per IFrame!{{/i18n}}
+    </div>
+{{/loading_denyed}}
+{{#wrong_protocol}}
+    <div class="messagebox messagebox_error">
+        {{#i18n}}Die gewählte Seite kann nur mit einer sicheren Verbindung eingebunden werden. Bitte geben Sie wenn möglich https in der URL an.{{/i18n}}
+    </div>
+{{/wrong_protocol}}
 <input type="hidden" class="iframe-cc-infos-stored" value="{{cc_infos}}">
 <div class="iframe-author-view">
     <div class="iframe-description">
@@ -6,17 +16,27 @@
             Bitte beachten Sie, dass manche Seiten die Darstellung in einem iFrame blockieren.{{/i18n}}
         </p>
     </div>
+    {{#https}}
+        <div class="iframe-description">
+        <p><b>
+            {{#i18n}}Bitte beachten Sie das StudIP über eine sichere Verbindung aufgerufen wird. 
+            Es können nur Quellen eingebunden werden die auch über eine sichere Verbindung verfügen. 
+            Nutzen Sie das Protokoll https in der URL!{{/i18n}}
+        </b></p>
+    </div>
+    {{/https}}
     <div class="iframe-data">
         <label>URL:</label><input class="urlinput" type=text size=32 value={{url}}>
         <br>
-        <label>{{#i18n}}Höhe{{/i18n}}:</label><input class="heightinput" type=text size=4 max=4 value={{height}}> {{#i18n}}Pixel{{/i18n}}
+        <label>{{#i18n}}Höhe{{/i18n}}:</label><input class="heightinput" type=number min=20 max=3000 value={{height}}> {{#i18n}}Pixel{{/i18n}}
+        <br>
+        <label>{{#i18n}}Breite{{/i18n}}:</label><input class="widthinput" type=number min=5 max=100 value={{#width}}{{width}}{{/width}}{{^width}}100{{/width}}> {{#i18n}}%{{/i18n}}
         <br>
         <label>{{#i18n}}Nutzerspezifische ID übergeben{{/i18n}}</label>
         <input class="submit-user-id-switch" name="submit-user-id-switch" type="checkbox" {{#submit_user_id}} checked{{/submit_user_id}}>
         <div class="iframe-submit-user">
             <label>{{#i18n}}Name des Übergabeparameters{{/i18n}}:</label><input  class="submit-param" type=text size=32 value={{submit_param}}>
             <label>{{#i18n}}Zufallszeichen für Verschlüsselung{{/i18n}}:</label><input class="salt" type=text size=32 min=8 value={{salt}}>
-        
         </div>
         <div class="iframe-description iframe-submit-user">
             <p>
@@ -43,14 +63,13 @@
             </div>
             <div class="iframe-cc-info">
                 <label>Werk:</label> <input type="text" size="32" value="" class="iframe-cc-work-name" name="iframe-cc-work-name" placeholder="Name">
-                                <input type="text" size="32" value="" class="iframe-cc-work-url" name="iframe-cc-work-url" placeholder="URL">
+                                     <input type="text" size="32" value="" class="iframe-cc-work-url" name="iframe-cc-work-url" placeholder="URL">
                 <br>
                 <label>Autor:</label> <input type="text" size="32" value="" class="iframe-cc-author-name" name="iframe-cc-author-name" placeholder="Name">
-                                <input type="text" size="32" value="" class="iframe-cc-author-url" name="iframe-cc-author-url" placeholder="URL">
+                                      <input type="text" size="32" value="" class="iframe-cc-author-url" name="iframe-cc-author-url" placeholder="URL">
                 <br>
                 <label>Lizenz der Plattform:</label> <input type="text" size="32" value="" class="iframe-cc-license-name" name="iframe-cc-license-name" placeholder="Name">
-                                <input type="text" size="32" value="" class="iframe-cc-license-url" name="iframe-cc-license-url" placeholder="URL">
-
+                                                     <input type="text" size="32" value="" class="iframe-cc-license-url" name="iframe-cc-license-url" placeholder="URL">
             </div>
         </div>
     </div>

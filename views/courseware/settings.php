@@ -22,12 +22,9 @@ if ($flash['success']) {
         </caption>
 
         <tbody>
-
             <tr>
                 <th colspan="2"><?= _cw('Allgemeines') ?></th>
             </tr>
-
-
             <tr>
                 <td>
                     <label for="courseware-title">
@@ -41,7 +38,6 @@ if ($flash['success']) {
                     <input id="courseware-title" type="text" name="courseware[title]" value="<?= htmlReady($courseware_block->title) ?>" aria-describedby="courseware-progression-description">
                 </td>
             </tr>
-
             <tr>
                 <td>
                     <label for="courseware-progression">
@@ -59,7 +55,6 @@ if ($flash['success']) {
                     </select>
                 </td>
             </tr>
-
 
             <?= $this->render_partial('courseware/_settings_editing_permission') ?>
             
@@ -79,6 +74,23 @@ if ($flash['success']) {
                 </td>
             </tr>
 
+            <tr>
+                <td>
+                    <label for="courseware-section-navigation">
+                        <?= _cw('Dritte Navigationsebene anzeigen') ?><br>
+                        <dfn id="courseware-section-navigation-description">
+                            <?= _cw('Wählen Sie hier aus wie die dritte Navigationsebene dargestellt werden soll.'); ?>
+                        </dfn>
+                    </label>
+                </td>
+                <td>
+                    <select name="courseware[section_navigation]" id="courseware-section-navigation">
+                        <option value="default"  <?= (!$courseware_block->getSectionsAsChapters() && $courseware_block->getShowSectionNav()) ? "selected" : "" ?> ><?= _cw("Über dem Seiteninhalt horizontal anzeigen") ?></option>
+                        <option value="chapter" <?= $courseware_block->getSectionsAsChapters() ? "selected" : "" ?>><?= _cw("Links in der Kapitelnavigation anzeigen") ?></option>
+                        <option value="hide" <?= $courseware_block->getShowSectionNav() ? "" : "selected" ?> ><?= _cw("Nicht anzeigen") ?></option>
+                    </select>
+                </td>
+            </tr>
 
             <tr>
                 <th colspan="2"><?= _cw('Blockeinstellungen') ?></th>

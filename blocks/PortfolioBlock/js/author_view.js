@@ -1,85 +1,82 @@
-define(['assets/js/author_view', 'assets/js/url'],
-       function (AuthorView, helper) {
+import $ from 'jquery'
+import Backbone from 'backbone'
+import AuthorView from 'js/author_view'
+import helper from 'js/url'
 
-    'use strict';
+export default AuthorView.extend({
 
-    return AuthorView.extend({
+    events: {
+        "click button[name=save]":   "onSave",
+        "click button[name=cancel]": "switchBack"
+    },
 
-        events: {
-            "click button[name=save]":   "onSave",
-            "click button[name=cancel]": "switchBack"
+    initialize() {
+        var $section = this.$el.closest('section.PortfolioBlock');
+        var $sortingButtons = jQuery('button.lower', $section);
+        $sortingButtons = $sortingButtons.add(jQuery('button.raise', $section));
+        $sortingButtons.addClass('no-sorting');
 
-        },
+        Backbone.on('beforemodeswitch', this.onModeSwitch, this);
+        Backbone.on('beforenavigate', this.onNavigate, this);
+    },
 
-        initialize: function() {
-            var $section = this.$el.closest('section.PortfolioBlock');
-            var $sortingButtons = jQuery('button.lower', $section);
-            $sortingButtons = $sortingButtons.add(jQuery('button.raise', $section));
-            $sortingButtons.addClass('no-sorting');
+    onNavigate(event){
+        if(!$("section .block-content button[name=save]").length) return;
+        if(event.isUserInputHandled) return;
+        event.isUserInputHandled = true;    
+        Backbone.trigger('preventnavigateto', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie die Seite trotzdem verlassen?'));
+    },
 
-            Backbone.on('beforemodeswitch', this.onModeSwitch, this);
-            Backbone.on('beforenavigate', this.onNavigate, this);
-        },
+    postRender() {
+        this.$("textarea").addToolbar();
+    },
 
-        onNavigate: function(event){
-            if(!$("section .block-content button[name=save]").length) return;
-            if(event.isUserInputHandled) return;
-            event.isUserInputHandled = true;    
-            Backbone.trigger('preventnavigateto', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie die Seite trotzdem verlassen?'));
+    // not used yet
+    render() {
+        return this;
+    },
 
-        },
+    onSave(event) {
+        var textarea = this.$("textarea"),
+            new_val = textarea.val(),
+            view = this;
 
-        postRender: function() {
-            this.$("textarea").addToolbar();
-        },
+        //textarea.remove();
+        helper
+            .callHandler(this.model.id, "save", {content: new_val})
+            .then(
+                // success
+                function () {
+                    jQuery(event.target).addClass("accept");
+                    view.switchBack();
+                },
 
-        // not used yet
-        render: function() {
-            return this;
-        },
+                // error
+                function (error) {
+                    var errorMessage = 'Could not update the block: '+jQuery.parseJSON(error.responseText).reason;
+                    alert(errorMessage);
+                    console.log(errorMessage, arguments);
+                })
+            .done();
+    },
 
-        onSave: function (event) {
-            var textarea = this.$("textarea"),
-                new_val = textarea.val(),
-                view = this;
+    onModeSwitch (toView, event) {
+        if (toView != 'student') {
+            return;
+        }
 
-            //textarea.remove();
-            helper
-                .callHandler(this.model.id, "save", {content: new_val})
-                .then(
-                    // success
-                    function () {
-                        jQuery(event.target).addClass("accept");
-                        view.switchBack();
-                    },
+        // the user already switched back (i.e. the is not visible)
+        if (!this.$el.is(':visible')) {
+            return;
+        }
 
-                    // error
-                    function (error) {
-                        var errorMessage = 'Could not update the block: '+jQuery.parseJSON(error.responseText).reason;
-                        alert(errorMessage);
-                        console.log(errorMessage, arguments);
-                    })
-                .done();
-        },
+        // another listener already handled the user's feedback
+        if (event.isUserInputHandled) {
+            return;
+        }
 
-        onModeSwitch: function (toView, event) {
-            if (toView != 'student') {
-                return;
-            }
+        event.isUserInputHandled = true;
+        Backbone.trigger('preventviewswitch', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie trotzdem fortfahren?'));
+    }, 
 
-            // the user already switched back (i.e. the is not visible)
-            if (!this.$el.is(':visible')) {
-                return;
-            }
-
-            // another listener already handled the user's feedback
-            if (event.isUserInputHandled) {
-                return;
-            }
-
-            event.isUserInputHandled = true;
-            Backbone.trigger('preventviewswitch', !confirm('Es gibt nicht gespeicherte Änderungen. Möchten Sie trotzdem fortfahren?'));
-        }, 
-
-    });
 });

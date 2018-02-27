@@ -1,7 +1,7 @@
-@import '../../../assets/mixins';
+@import '../../../assets/less/mixins.less';
 
 .content iframe {
-  border: none;
+  border: solid thin #ccc;
 }
 
 .iframe-author-view,
@@ -18,7 +18,7 @@
 .iframe-description {
         background: #eee;
         margin: 1em 0;
-        background-image: url("@{blocks-icons-dir}/blue/info-circle.svg");
+        .assets-bg-icon("blue/info-circle.svg");
         background-repeat: no-repeat;
         background-size: 32px;
         background-position: 26px center;
@@ -34,7 +34,6 @@
     display: none;
 }
 
-
 .iframe-cc-wrapper{
     padding: 0;
     input[type="checkbox"] {
@@ -46,7 +45,6 @@
 .iframe-cc-info {
     input {
         width: 18em !important;
-        
     }
 }
 
@@ -63,27 +61,26 @@
     background-repeat: no-repeat;
     margin-left: 2em;
     &.default {
-        background-image: url("../assets/images/icons/cc.srr.primary.svg");
+        background-image: url("../images/icons/cc/cc.srr.primary.svg");
     }
     &.by {
-        background-image: url("../assets/images/icons/by.svg");
+        background-image: url("../images/icons/cc/by.svg");
     }
     &.by-nc {
-        background-image: url("../assets/images/icons/by-nc.eu.svg");
+        background-image: url("../images/icons/cc/by-nc.eu.svg");
     }
     &.by-nc-nd {
-        background-image: url("../assets/images/icons/by-nc-nd.eu.svg");
+        background-image: url("../images/icons/cc/by-nc-nd.eu.svg");
     }
     &.by-nc-sa {
-        background-image: url("../assets/images/icons/by-nc-sa.svg");
+        background-image: url("../images/icons/cc/by-nc-sa.svg");
     }
     &.by-nd {
-        background-image: url("../assets/images/icons/by-nd.svg");
+        background-image: url("../images/icons/cc/by-nd.svg");
     }
     &.by-sa {
-        background-image: url("../assets/images/icons/by-sa.svg");
+        background-image: url("../images/icons/cc/by-sa.svg");
     }
-    
 }
 
 .iframe-cc-data {

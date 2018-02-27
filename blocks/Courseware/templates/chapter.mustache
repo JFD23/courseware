@@ -3,7 +3,7 @@
   data-title="{{title}}"
   data-publication="{{publication_date}}"
   data-type=Chapter
-  {{#dom_title}}title="{{visible_since_title}} {{dom_title}}"{{/dom_title}}>
+  {{#dom_title}}title="{{#i18n}}Freigegeben ab:{{/i18n}} {{visible_since_title}} {{dom_title}}"{{/dom_title}}>
 
   {{> chapter_title}}
 
@@ -21,6 +21,9 @@
         <button class=stop-sort-subchapter>{{#i18n}}Sortieren abschließen{{/i18n}}</button>
         {{^active_subchapter.aside_section}}
           <button class=activate-aside-section>{{#i18n}}Seitenblöcke aktivieren{{/i18n}}</button>
+        {{/active_subchapter.aside_section}}
+        {{#active_subchapter.aside_section}}
+          <button class=deactivate-aside-section data-type=Subchapter>{{#i18n}}Seitenblöcke entfernen{{/i18n}}</button>
         {{/active_subchapter.aside_section}}
       </li>
       <div class="clear"></div>

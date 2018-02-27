@@ -44,27 +44,15 @@ class CoursewareFactory
     {
         $courseware = $this->createGenericBlock($cid, 'Courseware', _cw('Courseware'));
 
-        $sem  = new \Seminar($cid);
+        $this->createChapter($courseware, _cw("Kapitel") . " 1");
+        $this->createChapter($courseware, _cw("Kapitel") . " 2");
 
-          $sem_status = $sem->getStatus();
-          foreach ($GLOBALS['SEM_TYPE'] as $id => $sem_type){ //get the id of ePortfolio Seminarclass
-            if ($sem_type['name'] == 'ePortfolio') {
-              $sem_type_id = $id;
-            }
-          }
-
-          if (!$sem_status == $sem_type_id) {
-            $this->createChapter($courseware, _cw("Kapitel") . " 1");
-            $this->createChapter($courseware, _cw("Kapitel") . " 2");
-          }
-          
         return $courseware;
     }
 
     private function createChapter($courseware, $title)
     {
         $chapter = $this->createGenericBlock($courseware, 'Chapter', $title);
-
         $this->createSubchapter($chapter, _cw("Unterkapitel 1"));
 
         return $chapter;
@@ -73,7 +61,6 @@ class CoursewareFactory
     private function createSubchapter($chapter, $title)
     {
         $subchapter = $this->createGenericBlock($chapter, 'Subchapter', $title);
-
         $this->createSection($subchapter, _cw("Abschnitt 1"));
         $this->createSection($subchapter, _cw("Abschnitt 2"));
 
@@ -83,7 +70,6 @@ class CoursewareFactory
     private function createSection($subchapter, $title)
     {
         $section = $this->createGenericBlock($subchapter, 'Section', $title);
-
         $this->createHtmlBlock($section, _cw("Name des HTML-Blocks"));
 
         return $section;

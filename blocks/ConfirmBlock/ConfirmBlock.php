@@ -4,28 +4,30 @@ namespace Mooc\UI\ConfirmBlock;
 
 use Mooc\UI\Block;
 
-/**
- */
 class ConfirmBlock extends Block
 {
     const NAME = 'Bestätigung';
 
-    function initialize()
+    public function initialize()
     {
         if ($this->title === 'Ein weiterer ConfirmBlock') {
             $this->title = 'Ich habe den Abschnitt gelesen.';
         }
     }
 
-    function student_view()
+    public function student_view()
     {
+        if (!$this->isAuthorized()) {
+            return array('inactive' => true);
+        }
+
         return array(
             'confirmed' => !! $this->getProgress()->grade,
             'title'     => $this->title
         );
     }
 
-    function author_view()
+    public function author_view()
     {
         $this->authorizeUpdate();
 
@@ -36,9 +38,10 @@ class ConfirmBlock extends Block
 
     // this is called when any user checks the checkbox
     // set the grade to 100%
-    function confirm_handler($data)
+    public function confirm_handler($data)
     {
         $this->setGrade(1);
+
         return array();
     }
 }
