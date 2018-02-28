@@ -48,11 +48,35 @@ class User extends \User
         }
 
         if ($this->canUpdate($model)) {
-            return true;
+            //return true;
         }
 
         if ($model instanceof DbBlock) {
             $perm = false;
+            
+            $seminar = \Seminar::getInstance($model->seminar_id);
+			$status = $seminar->getStatus();
+            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO') && $model->type == 'Chapter' ){
+               
+                //normale user
+                $db = \DBManager::get();
+                $query = "SELECT eportfolio_access FROM eportfolio_user WHERE user_id = :id AND Seminar_id = :sid";
+                $statement = $db->prepare($query);
+                $statement->execute(array(':id'=> $this->id, ':sid'=> $model->seminar_id));
+                $access = unserialize($statement->fetchAll()[0][eportfolio_access]);
+                
+                //supervisor
+                $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
+                    $statement = \DBManager::get()->prepare($query);
+                    $statement->execute(array(':semid'=> $model->seminar_id));
+                    $t = $statement->fetchAll();
+
+                    $freigaben_kapitel = json_decode($t[0][0], true);
+
+                if ($access[$model->id] == 0 && !$freigaben_kapitel[$model->id] ){
+                    return false;
+                }
+            }
             if ($this->isNobody()) {
                 $course = \Course::find($model->seminar_id);
                 $perm = get_config('ENABLE_FREE_ACCESS') && $course->lesezugriff == 0;
