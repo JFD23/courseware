@@ -48,22 +48,23 @@ class User extends \User
         }
 
         if ($this->canUpdate($model)) {
-            //return true;
+            return true;
         }
 
         if ($model instanceof DbBlock) {
             $perm = false;
             
+            //checken ob es sich um eine ePortfolio Veranstaltung handelt
             $seminar = \Seminar::getInstance($model->seminar_id);
 			$status = $seminar->getStatus();
             if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO') && $model->type == 'Chapter' ){
                
                 //normale user
-                $db = \DBManager::get();
-                $query = "SELECT eportfolio_access FROM eportfolio_user WHERE user_id = :id AND Seminar_id = :sid";
-                $statement = $db->prepare($query);
-                $statement->execute(array(':id'=> $this->id, ':sid'=> $model->seminar_id));
-                $access = unserialize($statement->fetchAll()[0][eportfolio_access]);
+                //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                //\PluginEngine::getPlugin('ePortfolio');
+                $freigabe = new \EportfolioFreigabe();
+                $access = $freigabe->hasAccess($this->id, $model->seminar_id, $model->id);
                 
                 //supervisor
                 $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
@@ -73,7 +74,7 @@ class User extends \User
 
                     $freigaben_kapitel = json_decode($t[0][0], true);
 
-                if ($access[$model->id] == 0 && !$freigaben_kapitel[$model->id] ){
+                if (!$access && !$freigaben_kapitel[$model->id] ){
                     return false;
                 }
             }
@@ -150,6 +151,31 @@ class User extends \User
             return false;
         }
 
+        //checken ob es sich um eine ePortfolio Veranstaltung handelt
+            $seminar = \Seminar::getInstance($model->seminar_id);
+			$status = $seminar->getStatus();
+            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO') && $model->type == 'Chapter' ){
+               
+                //normale user
+                //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                //\PluginEngine::getPlugin('ePortfolio');
+                $freigabe = new \EportfolioFreigabe();
+                $access = $freigabe->hasAccess($this->id, $model->seminar_id, $model->id);
+                
+                //supervisor
+                $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
+                    $statement = \DBManager::get()->prepare($query);
+                    $statement->execute(array(':semid'=> $model->seminar_id));
+                    $t = $statement->fetchAll();
+
+                    $freigaben_kapitel = json_decode($t[0][0], true);
+
+                if (!$access && !$freigaben_kapitel[$model->id] ){
+                    return false;
+                }
+            }
+        
         // optimistically get the current courseware
         $courseware = $this->container['current_courseware'];
 
