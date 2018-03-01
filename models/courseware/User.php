@@ -57,25 +57,36 @@ class User extends \User
             //checken ob es sich um eine ePortfolio Veranstaltung handelt
             $seminar = \Seminar::getInstance($model->seminar_id);
 			$status = $seminar->getStatus();
-            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO') && $model->type == 'Chapter' ){
-               
-                //normale user
-                //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
-                require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
-                //\PluginEngine::getPlugin('ePortfolio');
-                $freigabe = new \EportfolioFreigabe();
-                $access = $freigabe->hasAccess($this->id, $model->seminar_id, $model->id);
-                
-                //supervisor
-                $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
-                    $statement = \DBManager::get()->prepare($query);
-                    $statement->execute(array(':semid'=> $model->seminar_id));
-                    $t = $statement->fetchAll();
+            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+                //zugehörige kapitel_id
+                if($model->type == 'Chapter'){
+                    $chapter_id = $model->id;
+                } else if ($model->type == 'Subchapter'){
+                    $chapter_id = $model->parent_id;
+                }  else if ($model->type == 'Section'){
+                    $parent = $model->parent;
+                    $chapter_id = $parent->parent_id;
+                } else return true;//$chapter_id = false;
+            
+                if($chapter_id){
+                    //normale user
+                    //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                    require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                    //\PluginEngine::getPlugin('ePortfolio');
+                    $freigabe = new \EportfolioFreigabe();
+                    $access = $freigabe->hasAccess($this->id, $model->seminar_id, $chapter_id);
+                    
+                    //supervisor
+                    $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
+                        $statement = \DBManager::get()->prepare($query);
+                        $statement->execute(array(':semid'=> $model->seminar_id));
+                        $t = $statement->fetchAll();
 
-                    $freigaben_kapitel = json_decode($t[0][0], true);
+                        $freigaben_kapitel = json_decode($t[0][0], true);
 
-                if (!$access && !$freigaben_kapitel[$model->id] ){
-                    return false;
+                    if (!$access && !$freigaben_kapitel[$model->id] ){
+                        return false;
+                    }
                 }
             }
             if ($this->isNobody()) {
@@ -154,25 +165,36 @@ class User extends \User
         //checken ob es sich um eine ePortfolio Veranstaltung handelt
             $seminar = \Seminar::getInstance($model->seminar_id);
 			$status = $seminar->getStatus();
-            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO') && $model->type == 'Chapter' ){
-               
-                //normale user
-                //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
-                require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
-                //\PluginEngine::getPlugin('ePortfolio');
-                $freigabe = new \EportfolioFreigabe();
-                $access = $freigabe->hasAccess($this->id, $model->seminar_id, $model->id);
-                
-                //supervisor
-                $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
-                    $statement = \DBManager::get()->prepare($query);
-                    $statement->execute(array(':semid'=> $model->seminar_id));
-                    $t = $statement->fetchAll();
+            
+            if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+                if($model->type == 'Chapter'){
+                    $chapter_id = $model->id;
+                } else if ($model->type == 'Subchapter'){
+                    $chapter_id = $model->parent_id;
+                }  else if ($model->type == 'Section'){
+                    $parent = $model->parent;
+                    $chapter_id = $parent->parent_id;
+                } else return true;//
+            
+                if($chapter_id){
+                    //normale user
+                    //require_once('/var/www/html/studip3.5/public/plugins_packages/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                    require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/EportfolioFreigabe.class.php');
+                    //\PluginEngine::getPlugin('ePortfolio');
+                    $freigabe = new \EportfolioFreigabe();
+                    $access = $freigabe->hasAccess($this->id, $model->seminar_id, $chapter_id);
 
-                    $freigaben_kapitel = json_decode($t[0][0], true);
+                    //supervisor
+                    $query = "SELECT freigaben_kapitel FROM eportfolio WHERE Seminar_id = :semid";
+                        $statement = \DBManager::get()->prepare($query);
+                        $statement->execute(array(':semid'=> $model->seminar_id));
+                        $t = $statement->fetchAll();
 
-                if (!$access && !$freigaben_kapitel[$model->id] ){
-                    return false;
+                        $freigaben_kapitel = json_decode($t[0][0], true);
+
+                    if (!$access && !$freigaben_kapitel[$model->id] ){
+                        return false;
+                    }
                 }
             }
         
