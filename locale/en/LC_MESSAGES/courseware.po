@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-0226 11:42+0200\n"
+"POT-Creation-Date: 2018-03-0305 09:31+0200\n"
 "PO-Revision-Date: 2018-02-15 12:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: ELAN e.V. <lucke@elan-ev.de>\n"
@@ -702,12 +702,12 @@ msgstr "The import archive does not contain a data.xml file."
 msgid "Die Datendatei data.xml enthält kein valides XML."
 msgstr "The data file data.xml does not contain valid XML."
 
-#: blocks/Courseware/Courseware.php:574
+#: blocks/Courseware/Courseware.php:581
 #: models/mooc/db/CoursewareFactory.php:56
 msgid "Unterkapitel 1"
 msgstr "Sub-chapter 1"
 
-#: blocks/Courseware/Courseware.php:582
+#: blocks/Courseware/Courseware.php:589
 #: models/mooc/db/CoursewareFactory.php:64
 msgid "Abschnitt 1"
 msgstr "Section 1"
@@ -725,11 +725,11 @@ msgstr "in groups"
 msgid "Sie sind nicht berechtigt diesen Block zu editieren."
 msgstr "You are not authorized to edit this block."
 
-#: blocks/Section/Section.php:93
+#: blocks/Section/Section.php:98
 msgid "Sie sind nicht berechtigt Blöcke anzulegen."
 msgstr "You are not authorized to create blocks."
 
-#: blocks/Section/Section.php:135
+#: blocks/Section/Section.php:140
 msgid "Sie sind nicht berechtigt Blöcke zu löschen."
 msgstr " You are not authorized to delete blocks."
 

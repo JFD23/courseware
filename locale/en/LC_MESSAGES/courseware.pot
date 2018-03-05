@@ -10,7 +10,7 @@ msgstr ""
 "#-#-#-#-#  js.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-0226 11:42+0200\n"
+"POT-Creation-Date: 2018-03-0305 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "#-#-#-#-#  courseware.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-26 11:42+0100\n"
+"POT-Creation-Date: 2018-03-05 09:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -682,12 +682,12 @@ msgstr ""
 msgid "Die Datendatei data.xml enthält kein valides XML."
 msgstr ""
 
-#: blocks/Courseware/Courseware.php:574
+#: blocks/Courseware/Courseware.php:581
 #: models/mooc/db/CoursewareFactory.php:56
 msgid "Unterkapitel 1"
 msgstr ""
 
-#: blocks/Courseware/Courseware.php:582
+#: blocks/Courseware/Courseware.php:589
 #: models/mooc/db/CoursewareFactory.php:64
 msgid "Abschnitt 1"
 msgstr ""
@@ -705,11 +705,11 @@ msgstr ""
 msgid "Sie sind nicht berechtigt diesen Block zu editieren."
 msgstr ""
 
-#: blocks/Section/Section.php:93
+#: blocks/Section/Section.php:98
 msgid "Sie sind nicht berechtigt Blöcke anzulegen."
 msgstr ""
 
-#: blocks/Section/Section.php:135
+#: blocks/Section/Section.php:140
 msgid "Sie sind nicht berechtigt Blöcke zu löschen."
 msgstr ""
 
