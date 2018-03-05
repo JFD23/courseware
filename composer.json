@@ -1,0 +1,17 @@
+{
+    "require": {
+        "mustache/mustache": "2.11.1",
+        "pimple/pimple": "3.0.2",
+        "symfony/dom-crawler": "~2.8",
+        "willdurand/negotiation": "1.5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mooc\\Export\\": "export/",
+            "Mooc\\Import\\": "import/",
+            "Mooc\\UI\\": "blocks/"
+        },
+        "classmap": ["controllers/"],
+        "files": ["models/courseware/constants.php"]
+    }
+}
