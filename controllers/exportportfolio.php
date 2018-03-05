@@ -51,7 +51,7 @@ class ExportportfolioController extends CoursewareStudipController
         // create_zip_from_directory($tempDir, $zipFile);
         //print_r($export->export($courseware));
         //print_r(scandir($tempDir));
-        echo $tempDir;
+        echo '<path>' . $tempDir . '</path>';
         exit();
 
         // $zipFile = $GLOBALS['TMP_PATH'].'/'.uniqid().'.zip';
