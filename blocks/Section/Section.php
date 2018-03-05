@@ -73,11 +73,11 @@ class Section extends Block
         // block adder
         $content_block_types_basic = $this->getBlockTypes()['basic_blocks'];
         $content_block_types_advanced = $this->getBlockTypes()['advanced_blocks'];
-        // TODO: if this course is an e-portfolio course
         $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
-		$status = $seminar->getStatus();
+        $status = $seminar->getStatus();
         if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
             $content_block_types_eportfolio = $this->getBlockTypes()['eportfolio_blocks'];
+            $is_eportfolio = true;
         }
         
         return compact(
@@ -87,7 +87,8 @@ class Section extends Block
             'content_block_types_eportfolio',
             'icon',
             'title',
-            'visited'
+            'visited',
+            'is_eportfolio'
         );
     }
 

@@ -91,6 +91,12 @@ class Courseware extends Block
 
         $this->branchComplete($tree);
         $cid = $this->container['cid'];
+        
+        $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
+        $status = $seminar->getStatus();
+        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+            $is_eportfolio = true;
+        }
 
         return array_merge($tree, array(
             'user_is_nobody'        => $this->getCurrentUser()->isNobody(),
@@ -104,7 +110,8 @@ class Courseware extends Block
             'sections_as_chapters'  => $this->sections_as_chapters,
             'isSequential'          => $this->progression == 'seq',
             'active_section'        => $active_section, 
-            'cw_title'              => $courseware->title
+            'cw_title'              => $courseware->title,
+            'is_eportfolio'         => $is_eportfolio
             )
         );
     }
