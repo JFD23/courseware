@@ -27,9 +27,9 @@ class PortfolioBlockSupervisor extends Block
   
         //var_dump('supervisor: ' .$supervisorId);
         //var_dump('owner: ' . $ownerId);
+        $supervisoren = \Eportfoliomodel::getAllSupervisors($cid);
         
-        
-        if($this->getCurrentUser()->id == $supervisorId) {
+        if($this->getCurrentUser()->id == $supervisorId || in_array($this->getCurrentUser()->id, $supervisoren)) {
             $supervisor = true;
         } else {
             $supervisor = false;
