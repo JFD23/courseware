@@ -25,6 +25,7 @@ class PortfolioBlockSupervisor extends Block
         $supervisorId     = $roles[0]['supervisor_id'];
         $ownerId     = $roles[0]['owner_id'];
   
+        require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/Eportfoliomodel.class.php');
         //var_dump('supervisor: ' .$supervisorId);
         //var_dump('owner: ' . $ownerId);
         $supervisoren = \Eportfoliomodel::getAllSupervisors($cid);
