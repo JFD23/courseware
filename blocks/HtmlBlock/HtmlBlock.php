@@ -150,37 +150,38 @@ class HtmlBlock extends Block
     public function importContents($contents, array $files)
     {
         $document = new \DOMDocument();
-        $document->loadHTML(utf8_decode($contents));
+        if($contents){
+            $document->loadHTML(utf8_decode($contents));
 
-        $anchorElements = $document->getElementsByTagName('a');
-        foreach ($anchorElements as $element) {
-            if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
-                continue;
+            $anchorElements = $document->getElementsByTagName('a');
+            foreach ($anchorElements as $element) {
+                if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
+                    continue;
+                }
+                $block = $this;
+                $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element, $files) {
+                    parse_str($components['query'], $queryParams);
+                    $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
+                    $components['query'] = http_build_query($queryParams);
+                    $element->setAttribute('href', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
+                });
             }
-            $block = $this;
-            $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element, $files) {
-                parse_str($components['query'], $queryParams);
-                $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
-                $components['query'] = http_build_query($queryParams);
-                $element->setAttribute('href', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
-            });
-        }
 
-        $imageElements = $document->getElementsByTagName('img');
-        foreach ($imageElements as $element) {
-            if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
-                continue;
+            $imageElements = $document->getElementsByTagName('img');
+            foreach ($imageElements as $element) {
+                if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
+                    continue;
+                }
+                $block = $this;
+                $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element, $files) {
+                    parse_str($components['query'], $queryParams);
+                    $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
+                    $components['query'] = http_build_query($queryParams);
+                    $element->setAttribute('src', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
+                });
             }
-            $block = $this;
-            $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element, $files) {
-                parse_str($components['query'], $queryParams);
-                $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
-                $components['query'] = http_build_query($queryParams);
-                $element->setAttribute('src', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
-            });
+            $this->content = \STUDIP\Markup::purifyHtml($document->saveHTML());
         }
-        $this->content = \STUDIP\Markup::purifyHtml($document->saveHTML());
-
         $this->save();
     }
 
