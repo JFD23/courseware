@@ -157,6 +157,12 @@ class User extends \User
             $seminar = \Seminar::getInstance($block->seminar_id);
 			$status = $seminar->getStatus();
             if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+                
+                require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
+                if(\LockedBlock::isLocked($block->id)){
+                    return false;
+                }
+                
                 if($block->type == 'Chapter'){
                     $chapter_id = $block->id;
                 } else if ($block->type == 'Subchapter'){
