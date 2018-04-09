@@ -309,6 +309,17 @@ abstract class Block {
      */
     public function isEditable()
     {
+        //checken ob es sich um eine ePortfolio Veranstaltung handelt
+        $seminar = \Seminar::getInstance($this->_model->seminar_id);
+        $status = $seminar->getStatus();
+        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+            //checken ob Block für Bearbeitung gesperrt ist
+            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
+            if(\LockedBlock::isLocked($this->id)){
+                return false;
+            }
+        }
+  
         return true;
     }
 
