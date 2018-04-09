@@ -63,7 +63,7 @@ class Block extends \SimpleORMap implements \Serializable
         $this->registerCallback('after_delete', 'destroyUserProgress');
         $this->registerCallback('after_delete', 'updatePositionsAfterDelete');
 
-        $events = words('after_create after_update after_store after_delete');
+        $events = words('after_update after_store after_delete');
         $this->registerCallback($events, 'callbackToMetrics');
 
         parent::__construct($id);
