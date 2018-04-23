@@ -18,8 +18,15 @@ class PortfolioBlock extends Block
 
     function student_view()
     {
+        $cid = $this->container['cid'];
+    
+        require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/Eportfoliomodel.class.php');
+        $owner = \Eportfoliomodel::getOwner($cid);
+
         $this->setGrade(1.0);
-        if ($this->container['current_user']->canUpdate($this)) {
+        
+        //if current user = eportfolio owner
+        if ($this->container['current_user']->id == $owner) {
             return array(
                 'content' => formatReady($this->content),
                 'show_note' => true
@@ -42,6 +49,17 @@ class PortfolioBlock extends Block
             $content = htmlReady($this->content);
         }
         return compact('content');
+    }
+    
+    protected function authorizeUpdate(){
+        parent::authorizeUpdate();
+        $cid = $this->container['cid'];
+    
+        require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/Eportfoliomodel.class.php');
+        $owner = \Eportfoliomodel::getOwner($cid);
+        if ($this->container['current_user']->id != $owner) {
+            throw new \Mooc\UI\Errors\AccessDenied(_cw("Sie sind nicht berechtigt diesen Block zu editieren."));
+        }
     }
 
     /**
