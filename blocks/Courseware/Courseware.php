@@ -443,11 +443,23 @@ class Courseware extends Block
             return null;
         }
 
+        $seminar = \Seminar::getInstance($child->seminar_id);
+        $status = $seminar->getStatus();
+        $editable = true;
+        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
+            if(\LockedBlock::isLocked($child->id)){
+                $editable =  false;
+            }
+        }
+        
         if ($showFields) {
             $block = $this->getBlockFactory()->makeBlock($child);
             $json = $block->toJSON();
+            $json['editable'] = $editable;
         } else {
             $json = $child->toArray();
+            $json['editable'] = $editable;
         }
 
         if (!$child->isPublished()) {

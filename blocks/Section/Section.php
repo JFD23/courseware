@@ -73,12 +73,19 @@ class Section extends Block
         // block adder
         $content_block_types_basic = $this->getBlockTypes()['basic_blocks'];
         $content_block_types_advanced = $this->getBlockTypes()['advanced_blocks'];
+        
         $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
         $status = $seminar->getStatus();
+        $editable = true;
         if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
             $content_block_types_eportfolio = $this->getBlockTypes()['eportfolio_blocks'];
             $is_eportfolio = true;
+            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
+            if(\LockedBlock::isLocked($this->id)){
+                $editable =  false;
+            }
         }
+        
         
         return compact(
             'blocks',
@@ -88,7 +95,8 @@ class Section extends Block
             'icon',
             'title',
             'visited',
-            'is_eportfolio'
+            'is_eportfolio',
+            'editable'
         );
     }
 

@@ -9,10 +9,12 @@
     <p>{{#i18n}}Keine Inhaltsblöcke{{/i18n}}</p>
   </div>
 
+{{#editable}}
   <div class=block-adder>
     <h3>{{#i18n}}Block hinzufügen{{/i18n}}</h3>
     {{> block_types_view}}
   </div>
+ {{/editable}}
 {{/inactive}}
 
 {{#inactive}}
