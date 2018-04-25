@@ -427,9 +427,9 @@ abstract class Block {
     public function setGrade($grade)
     {
         // only students of this course get grades
-        if (!$this->getCurrentUser()->canUpdate($this->_model)) {
+        //if (!$this->getCurrentUser()->canUpdate($this->_model)) {
             $this->getProgress()->grade = $grade;
-        }
+        //}
     }
 
     /**
