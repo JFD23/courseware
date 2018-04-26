@@ -34,7 +34,11 @@ class DownloadBlock extends Block
             return array('inactive' => true);
         }
         $this->authorizeUpdate();
-        $allfiles = $this->showFiles($this->folder_id);
+        if($this->folder_id){
+            $allfiles = $this->showFiles($this->folder_id);
+        } else {
+            $allfiles = $this->showFiles($this->getFolders()[0]['folder_id']);
+        }
         return array_merge($this->getAttrArray(), ["allfiles" => $allfiles, "folders" => $this->getFolders()]);
     }
 
