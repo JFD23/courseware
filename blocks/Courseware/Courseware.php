@@ -91,12 +91,6 @@ class Courseware extends Block
 
         $this->branchComplete($tree);
         $cid = $this->container['cid'];
-        
-        $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
-        $status = $seminar->getStatus();
-        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
-            $is_eportfolio = true;
-        }
 
         return array_merge($tree, array(
             'user_is_nobody'        => $this->getCurrentUser()->isNobody(),
@@ -110,8 +104,7 @@ class Courseware extends Block
             'sections_as_chapters'  => $this->sections_as_chapters,
             'isSequential'          => $this->progression == 'seq',
             'active_section'        => $active_section, 
-            'cw_title'              => $courseware->title,
-            'is_eportfolio'         => $is_eportfolio
+            'cw_title'              => $courseware->title
             )
         );
     }
@@ -443,23 +436,11 @@ class Courseware extends Block
             return null;
         }
 
-        $seminar = \Seminar::getInstance($child->seminar_id);
-        $status = $seminar->getStatus();
-        $editable = true;
-        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
-            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
-            if(\LockedBlock::isLocked($child->id)){
-                $editable =  false;
-            }
-        }
-        
         if ($showFields) {
             $block = $this->getBlockFactory()->makeBlock($child);
             $json = $block->toJSON();
-            $json['editable'] = $editable;
         } else {
             $json = $child->toArray();
-            $json['editable'] = $editable;
         }
 
         if (!$child->isPublished()) {
@@ -611,12 +592,14 @@ class Courseware extends Block
     private function createAnyBlock($parent, $type, $data)
     {
         $block = new \Mooc\DB\Block();
+        $parent_id = is_object($parent) ? $parent->id : $parent;
         $block->setData(array(
             'seminar_id' => $this->_model->seminar_id,
-            'parent_id' => is_object($parent) ? $parent->id : $parent,
+            'parent_id' => $parent_id,
             'type' => $type,
             'title' => $data['title'],
             'publication_date' => $data['publication_date'],
+            'position' => $block->getNewPosition($parent_id)
         ));
 
         $block->store();

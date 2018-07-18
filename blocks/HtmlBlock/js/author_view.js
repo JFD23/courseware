@@ -42,13 +42,18 @@ export default AuthorView.extend({
   },
 
   onSave(event) {
-    var textarea = this.$('textarea'),
-        new_val = textarea.val(),
-        view = this;
+    var view = this;
+    var $content = '';
+    var $textarea = this.$('textarea');
+    var wysiwyg_editor = CKEDITOR.instances[$textarea.get(0).id]; 
+
+    wysiwyg_editor.setData(STUDIP.wysiwyg.markAsHtml(wysiwyg_editor.getData())); 
+    wysiwyg_editor.updateElement();
+    $content = $textarea.val();
 
     helper
-      .callHandler(this.model.id, 'save', { content: new_val })
-      .then(function () {
+      .callHandler(this.model.id, 'save', { content: $content })
+      .then(function (success) {
         jQuery(event.target).addClass('accept');
         view.switchBack();
       }).catch(function (error) {

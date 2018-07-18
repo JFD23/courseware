@@ -22,14 +22,21 @@ class HtmlBlock extends Block
             return array('inactive' => true);
         }
         $this->setGrade(1.0);
+        
+        $content = $this->content;
+        if (strpos($content, "<!DOCTYPE html") == 0 ) {
+            $content = \STUDIP\Markup::markAsHtml($content);
+        }
 
-        return array('content' => formatReady($this->content));
+        $content = formatReady($content);
+
+        return array('content' => $content);
     }
 
     public function author_view()
     {
         $this->authorizeUpdate();
-        $content = htmlReady($this->content);
+        $content = wysiwygReady($this->content);
 
         return compact('content');
     }
@@ -37,14 +44,30 @@ class HtmlBlock extends Block
     /**
      * Updates the block's contents.
      *
-     * @param array $data                  The request data
+     * @param array $data The request data
      *
      * @return array The block's data
      */
     public function save_handler(array $data)
     {
         $this->authorizeUpdate();
-        $this->content = \STUDIP\Markup::purifyHtml((string) $data['content']);
+        $content = \STUDIP\Markup::purifyHtml((string) $data['content']);
+        if ($content == "") {
+            $this->content = "";
+        } else {
+            $dom = new \DOMDocument();
+            $dom->loadHTML('<?xml encoding="utf-8" ?>'.$content);
+            $xpath = new \DOMXPath($dom);
+            $hrefs = $xpath->evaluate("//a");
+            for ($i = 0; $i < $hrefs->length; $i++) {
+                $href = $hrefs->item($i);
+                if($href->getAttribute("class") == "link-extern") {
+                $href->removeAttribute('target');
+                $href->setAttribute("target", "_blank");
+                }
+            }
+            $this->content = $dom->saveHTML();
+        }
 
         return array('content' => $this->content);
     }
@@ -59,7 +82,7 @@ class HtmlBlock extends Block
         }
 
         $document = new \DOMDocument();
-        $document->loadHTML($this->content);
+        $document->loadHTML('<?xml encoding="utf-8" ?>'.$this->content);
 
         $anchorElements = $document->getElementsByTagName('a');
         foreach ($anchorElements as $element) {
@@ -83,7 +106,7 @@ class HtmlBlock extends Block
             });
         }
 
-        return \STUDIP\Markup::purifyHtml($document->saveHTML());
+        return $document->saveHTML();
     }
 
     /**
@@ -102,20 +125,17 @@ class HtmlBlock extends Block
         $extractFile = function ($url) use ($user, $block) {
             return $block->applyCallbackOnInternalUrl($url, function ($components, $queryParams) use ($user) {
                 if (isset($queryParams['file_id'])) {
-                    $document = new \StudipDocument($queryParams['file_id']);
-
-                    if (!$document->checkAccess($user->cfg->getUserId())) {
-                        return null;
-                    }
+                    $file_ref = new \FileRef($queryParams['file_id']);
+                    $file = new \File($file_ref->file_id);
 
                     return array(
                         'id' => $queryParams['file_id'],
-                        'name' => $document->name,
-                        'description' => $document->description,
-                        'filename' => $document->filename,
-                        'filesize' => $document->filesize,
-                        'url' => $document->url,
-                        'path' => get_upload_file_path($queryParams['file_id']),
+                        'name' => $file_ref->name,
+                        'description' => $file_ref->description,
+                        'filename' => $file->name,
+                        'filesize' => $file->size,
+                        'url' => $file->getURL(),
+                        'path' => $file->getPath()
                     );
                 }
 
@@ -150,38 +170,36 @@ class HtmlBlock extends Block
     public function importContents($contents, array $files)
     {
         $document = new \DOMDocument();
-        if($contents){
-            $document->loadHTML(utf8_decode($contents));
-
-            $anchorElements = $document->getElementsByTagName('a');
-            foreach ($anchorElements as $element) {
-                if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
-                    continue;
-                }
-                $block = $this;
-                $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element, $files) {
-                    parse_str($components['query'], $queryParams);
-                    $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
-                    $components['query'] = http_build_query($queryParams);
-                    $element->setAttribute('href', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
-                });
+        $document->loadHTML('<?xml encoding="utf-8" ?>'.$contents);
+        $anchorElements = $document->getElementsByTagName('a');
+        foreach ($anchorElements as $element) {
+            if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
+                continue;
             }
-
-            $imageElements = $document->getElementsByTagName('img');
-            foreach ($imageElements as $element) {
-                if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
-                    continue;
-                }
-                $block = $this;
-                $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element, $files) {
-                    parse_str($components['query'], $queryParams);
-                    $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
-                    $components['query'] = http_build_query($queryParams);
-                    $element->setAttribute('src', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
-                });
-            }
-            $this->content = \STUDIP\Markup::purifyHtml($document->saveHTML());
+            $block = $this;
+            $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element, $files) {
+                parse_str($components['query'], $queryParams);
+                $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
+                $components['query'] = http_build_query($queryParams);
+                $element->setAttribute('href', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
+            });
         }
+
+        $imageElements = $document->getElementsByTagName('img');
+        foreach ($imageElements as $element) {
+            if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
+                continue;
+            }
+            $block = $this;
+            $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element, $files) {
+                parse_str($components['query'], $queryParams);
+                $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
+                $components['query'] = http_build_query($queryParams);
+                $element->setAttribute('src', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
+            });
+        }
+        $this->content = \STUDIP\Markup::purifyHtml($document->saveHTML());
+
         $this->save();
     }
 
@@ -227,4 +245,5 @@ class HtmlBlock extends Block
     {
         return rtrim($baseUrl, '/').'/'.ltrim($path, '/').'?'.$components['query'];
     }
+
 }

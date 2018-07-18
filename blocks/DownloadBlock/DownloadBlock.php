@@ -20,12 +20,22 @@ class DownloadBlock extends Block
 
     public function student_view()
     {
-        $document = \StudipDocument::find($this->file_id);
-        if ($document) {
-            $access = $document->checkAccess($this->container['current_user_id']);
-            $url = ($document->url != "") ? true : false;
+        $file = \FileRef::find($this->file_id);
+        if ($file) { 
+            $url = $file->getDownloadURL('force');
+            $access = ($file->terms_of_use->download_condition == 0) ? true : false;
+        } else { 
+            $url = "";
+            $access = true;
         }
-        return array_merge($this->getAttrArray(), array('confirmed' => !! $this->getProgress()->grade, "download_access" => $access, 'url' => $url));
+
+        return array_merge(
+            $this->getAttrArray(), 
+            array('confirmed' => !! $this->getProgress()->grade, 
+                  'url' => $url,
+                  'download_access' => $access
+            )
+        );
     }
 
     public function author_view()
@@ -34,12 +44,9 @@ class DownloadBlock extends Block
             return array('inactive' => true);
         }
         $this->authorizeUpdate();
-        if($this->folder_id){
-            $allfiles = $this->showFiles($this->folder_id);
-        } else {
-            $allfiles = $this->showFiles($this->getFolders()[0]['folder_id']);
-        }
-        return array_merge($this->getAttrArray(), ["allfiles" => $allfiles, "folders" => $this->getFolders()]);
+        $allfiles = $this->showFiles($this->folder_id);
+        $folders =  \Folder::findBySQL('range_id = ?', array($this->container['cid']));
+        return array_merge($this->getAttrArray(), array('allfiles' => $allfiles, 'folders' => $folders));
     }
 
     public function save_handler(array $data)
@@ -62,6 +69,7 @@ class DownloadBlock extends Block
     {
         $this->authorizeUpdate();
         if (isset ($data['folder_id'])) {
+
             return $this->showFiles($data['folder_id']);
         }
 
@@ -74,44 +82,13 @@ class DownloadBlock extends Block
         return ;
     }
 
-    private function getFolders() {
-        $cid = $this->container['cid'];
-        $db = \DBManager::get();
-        $stmt = $db->prepare('
-            SELECT
-                *
-            FROM
-                folder
-            WHERE
-                seminar_id = :cid
-        ');
-        $stmt->bindParam(":cid", $cid);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
-    private function showFiles($folderId, $filetype = "")
+    private function showFiles($folder_id)
     {
-        $db = \DBManager::get();
-        $stmt = $db->prepare('
-            SELECT
-                *
-            FROM
-                dokumente
-            WHERE
-                range_id = :range_id
-            ORDER BY
-                name
-        ');
-        $stmt->bindParam(":range_id", $folderId);
-        $stmt->execute();
-        $response = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $response = \FileRef::findBySQL('folder_id = ?', array($folder_id));
         $filesarray = array();
         foreach ($response as $item) {
-            $filesarray[] = $item;
+            $filesarray[] = array("id" => $item->id, "name" => $item->name);
         }
-
         return $filesarray;
     }
 
@@ -143,15 +120,17 @@ class DownloadBlock extends Block
 
     public function getFiles()
     {
-        $document = new \StudipDocument($this->file_id);
-        $files[] = array (
+        $file_ref = new \FileRef($this->file_id);
+        $file = new \File($file_ref->file_id);
+        
+        $files[] = array(
             'id' => $this->file_id,
-            'name' => $this->file_name,
-            'description' => $document->description,
-            'filename' => $document->filename,
-            'filesize' => $document->filesize,
-            'url' => $document->url,
-            'path' => get_upload_file_path($this->file_id),
+            'name' => $file_ref->name,
+            'description' => $file_ref->description,
+            'filename' => $file->name,
+            'filesize' => $file->size,
+            'url' => $file->getURL(),
+            'path' => $file->getPath()
         );
 
         return $files;
@@ -186,8 +165,6 @@ class DownloadBlock extends Block
             $this->file_name = $properties['file_name'];
         }
 
-        $this->setFileId($this->file_name);
-
         if (isset($properties['download_title'])) {
             $this->download_title = $properties['download_title'];
         }
@@ -203,23 +180,15 @@ class DownloadBlock extends Block
         $this->save();
     }
 
-    private function setFileId($file_name)
-    {
-        $cid = $this->container['cid'];
-        $document =  current(\StudipDocument::findBySQL('filename = ? AND seminar_id = ?', array($file_name, $cid)));
-        $this->file_id = $document->dokument_id;
-        $this->file = $document->name;
-        $this->folder_id = $document->range_id;
-
-        return;
-    }
-
     public function importContents($contents, array $files)
     {
-        $file = reset($files);
-        if ($file->id == $this->file_id) {
-            $this->save();
+        foreach($files as $file){
+            if($this->file_name == $file->name) {
+                $this->file_id = $file->id;
+                $this->save();
+            }
         }
+
     }
 
 }

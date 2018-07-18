@@ -54,16 +54,14 @@ export default AuthorView.extend({
 
     onSave(event) {
         var $view = this;
-        var $pdf_file     = $view.$('.cw-pdf-set-file').val();
-        var $pdf_file_id  = $view.$('.cw-pdf-set-file option:selected').attr('document_id');
-        var $pdf_filename = $view.$('.cw-pdf-set-file option:selected').attr('filename');
+        var $pdf_file_id  = $view.$('.cw-pdf-set-file option:selected').attr('file_id');
+        var $pdf_filename = $view.$('.cw-pdf-set-file option:selected').attr('file_name');
         var $pdf_title    = $view.$('.cw-pdf-set-title').val();
         if ($pdf_title == "") {
             $pdf_title = $pdf_filename;
         }
         helper
             .callHandler(this.model.id, 'save', {
-                pdf_file: $pdf_file,
                 pdf_filename: $pdf_filename,
                 pdf_file_id: $pdf_file_id,
                 pdf_title: $pdf_title
@@ -73,10 +71,7 @@ export default AuthorView.extend({
                 function () {
                   $(event.target).addClass('accept');
                   $view.switchBack();
-                  // reload if PDFJS has not been loaded jet
-                  if (typeof PDFJS === 'undefined') {
-                    helper.reload();
-                  }
+                  helper.reload();
                 },
                 // error
                 function (error) {

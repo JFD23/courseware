@@ -18,11 +18,6 @@ class CpoController extends CoursewareStudipController
 
         PageLayout::addStylesheet($this->plugin->getPluginURL().'/assets/static/courseware.css');
 
-        $courseware = $this->container['current_courseware'];
-        $title = Request::option('cid', false) ? $_SESSION['SessSemName']['header_line'] . ' - ' : '';
-        $title .= $courseware->title.' - Fortschrittsübersicht für Lehrende';
-        PageLayout::setTitle($title);
-
         if (Navigation::hasItem('/course/mooc_courseware/progressoverview')) {
             Navigation::activateItem('/course/mooc_courseware/progressoverview');
         }
@@ -37,7 +32,7 @@ class CpoController extends CoursewareStudipController
                 if (array_key_exists($item->block_id,$memo)) {
                     $stored_grade = $memo[$item->block_id]['grade'];
                     $users = $memo[$item->block_id]['users']+1;
-                    $grade = ($stored_grade+$item->grade) / $users;
+                    $grade = ($stored_grade+ $item->grade);
                     $memo[$item->block_id]['date'] > $item->chdate ? $date = $memo[$item->block_id]['date'] : $date = $item->chdate;
                     $memo[$item->block_id] = array(
                         'grade' => $grade,
@@ -47,7 +42,7 @@ class CpoController extends CoursewareStudipController
                     );
                 } else {
                     $memo[$item->block_id] = array(
-                        'grade' => $item->grade,
+                        'grade' => (int)$item->grade,
                         'max_grade' => $item->max_grade,
                         'users' => 1,
                         'date' => $item->chdate
@@ -60,6 +55,7 @@ class CpoController extends CoursewareStudipController
 
         $members = count((new \CourseMember())->findByCourseAndStatus(array($this->plugin->getCourseId()), 'autor'));
         foreach ($progress as &$block) {
+            $block['grade'] = $block['grade'] / $block['users'];
             if($block['users'] < $members) {
                 $block['grade'] = ($block['grade'] * $block['users']) / $members;
             }
@@ -79,11 +75,16 @@ class CpoController extends CoursewareStudipController
 
     public function postoverview_action()
     {
+        if (!$GLOBALS['perm']->have_studip_perm('tutor', $this->plugin->getCourseId())) {
+            throw new Trails_Exception(401);
+        }
+
         if (Navigation::hasItem('/course/mooc_courseware/postoverview')) {
             Navigation::activateItem('/course/mooc_courseware/postoverview');
         }
 
         PageLayout::addStylesheet($this->plugin->getPluginURL().'/assets/static/courseware.css');
+        PageLayout::addScript($this->plugin->getPluginURL().'/assets/js/postoverview.js');
 
         $this->cid = $this->plugin->getCourseId();
         $this->threads = array();
@@ -95,7 +96,7 @@ class CpoController extends CoursewareStudipController
             $thread = array(
                 'thread_id' => $thread_id, 
                 'thread_title' => \Mooc\DB\Post::findPost($thread_id, 0, $this->cid)['content'],
-                'thread_posts' => \Mooc\DB\Post::findPosts($thread_id, $this->cid, $this->container['current_user']['id'])
+                'thread_posts' => \Mooc\DB\Post::findPosts($thread_id, $this->cid, $this->container['current_user']['id'], true)
             );
             array_push($this->threads, $thread);
         }
@@ -103,15 +104,15 @@ class CpoController extends CoursewareStudipController
 
     public function answer_action()
     {
-        if ((Request::get('thread_id') != '') && (Request::get('content') != '')) { 
+        if ((Request::get('thread_id') != '') && (Request::get('content') != '') && (Request::get('cid') != '')) { 
             $thread_id = Request::get('thread_id');
             $content = Request::get('content');
             $answer = 'answer=true';
+            $cid = Request::get('cid');
         } else {
-            return $this->redirect('postoverview?answer=false');
+            return $this->redirect('cpo/postoverview?answer=false');
         }
 
-        $cid = $this->plugin->getCourseId();
         $post_id = Post::getNextPostId($thread_id, $cid);
 
         $data = array(
@@ -129,7 +130,36 @@ class CpoController extends CoursewareStudipController
             $answer = 'answer=false';
         }
 
-        return $this->redirect('postoverview?'.$answer);
+        return $this->redirect('cpo/postoverview?'.$answer);
+    }
+
+    public function hide_post_action()
+    {
+        if ((Request::get('thread_id') != '') && (Request::get('post_id') != '') && (Request::get('cid') != '')) { 
+            $thread_id = Request::get('thread_id');
+            $post_id = Request::get('post_id');
+            $cid = Request::get('cid');
+            $hide = Request::get('hide_post');
+        } else {
+            return $this->redirect('cpo/postoverview?hide=false');
+        }
+        $hidden = Post::hidePost($thread_id, $post_id, $cid, $hide);
+
+        return $this->redirect('cpo/postoverview?hide='.$hidden.'&thread_id='.$thread_id);
+    }
+
+    public function edit_title_action()
+    {
+        if ((Request::get('thread_id') != '') && (Request::get('thread_title') != '')) { 
+            $thread_id = Request::get('thread_id');
+            $thread_title = Request::get('thread_title');
+            $cid = $this->plugin->getCourseId();
+        } else {
+            return $this->redirect('cpo/postoverview?update=false');
+        }
+        Post::alterPost($thread_id, 0, $cid, $thread_title);
+
+        return $this->redirect('cpo/postoverview?update=true&thread_id='.$thread_id);
     }
 
     private function getThreadsInBlocks()
@@ -208,6 +238,9 @@ class CpoController extends CoursewareStudipController
                 );
                 $maxGrades = array_map(
                     function ($block) use ($progress) {
+                        if ($progress[$block['id']]['max_grade'] == null) {
+                            return 1;
+                        }
                         return (double) $progress[$block['id']]['max_grade'];
                     },
                     $root['children']

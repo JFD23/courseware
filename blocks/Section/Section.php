@@ -30,6 +30,7 @@ class Section extends Block
     private static $map_blocks_to_icons = array(
         'BlubberBlock'  => self::ICON_CHAT,
         'ForumBlock'    => self::ICON_CHAT,
+        'PostBlock'     => self::ICON_CHAT,
         'VideoBlock'    => self::ICON_VIDEO,
         'AudioBlock'    => self::ICON_AUDIO,
         'TestBlock'     => self::ICON_TASK,
@@ -74,36 +75,13 @@ class Section extends Block
         $content_block_types_basic = $this->getBlockTypes()['basic_blocks'];
         $content_block_types_advanced = $this->getBlockTypes()['advanced_blocks'];
         
-        $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
-        $status = $seminar->getStatus();
-        $editable = true;
-        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
-            $content_block_types_eportfolio = $this->getBlockTypes()['eportfolio_blocks'];
-            $is_eportfolio = true;
-            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
-            if(\LockedBlock::isLocked($this->id)){
-                $editable =  false;
-            }
-        }
-        
-        
-        return compact(
-            'blocks',
-            'content_block_types_basic',
-            'content_block_types_advanced',
-            'content_block_types_eportfolio',
-            'icon',
-            'title',
-            'visited',
-            'is_eportfolio',
-            'editable'
-        );
+        return compact('blocks', 'content_block_types_basic', 'content_block_types_advanced', 'icon', 'title', 'visited');
     }
 
     public function add_content_block_handler($data)
     {
         if (!$this->container['current_user']->canCreate($this)) {
-            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt Blöcke anzulegen.'));
+            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt BlÃ¶cke anzulegen.'));
         }
 
         if (!isset($data['type'])) {
@@ -128,6 +106,7 @@ class Section extends Block
             'type' => $data['type'],
             'sub_type' => $data['sub_type'],
             'title' => 'Ein weiterer '.$data['type'],
+            'position' => $block->getNewPosition($this->_model->id)
         ));
 
         $block->store();
@@ -145,7 +124,7 @@ class Section extends Block
     public function remove_content_block_handler($data)
     {
         if (!$this->container['current_user']->canUpdate($this)) {
-            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt Blöcke zu löschen.'));
+            throw new Errors\AccessDenied(_cw('Sie sind nicht berechtigt BlÃ¶cke zu lÃ¶schen.'));
         }
 
         if (!isset($data['child_id'])) {
@@ -249,27 +228,15 @@ class Section extends Block
         ksort($blockTypes);
         $basic_blocks = array();
         $advanced_blocks = array();
-        $eportfolio_blocks = array();
         foreach($blockTypes as $key => $value){
-            switch ($value['type']) {
-                case 'HtmlBlock':
-                case 'VideoBlock':
-                case 'PostBlock':
-                case 'TestBlock':
-                    array_push($basic_blocks, $value);
-                    break;
-                case 'PortfolioBlock':
-                case 'PortfolioBlockSupervisor':
-                case 'PortfolioBlockUser':
-                    array_push($eportfolio_blocks, $value);
-                    break;
-                default:
-                    array_push($advanced_blocks, $value);
+            if (in_array($value['type'], array('HtmlBlock', 'VideoBlock', 'PostBlock',  'TestBlock') )) {
+                array_push($basic_blocks, $value);
+            } else {
+                array_push($advanced_blocks, $value);
             }
-
         }
 
-        return array('basic_blocks' =>$basic_blocks, 'advanced_blocks' => $advanced_blocks, 'eportfolio_blocks' => $eportfolio_blocks);
+        return array('basic_blocks' =>$basic_blocks, 'advanced_blocks' => $advanced_blocks);
     }
 
     private function refreshIcon()

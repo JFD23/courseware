@@ -45,13 +45,6 @@ class ProgressController extends CoursewareStudipController
 
         $this->courseware = current($grouped['']);
         $this->buildTree($grouped, $progress, $this->courseware);
-
-        $courseware = $this->container['current_courseware'];
-        $title = Request::option('cid', false)
-               ? $_SESSION['SessSemName']['header_line'].' - '
-               : '';
-        $title .= $courseware->title.' - Fortschrittsübersicht';
-        PageLayout::setTitle($title);
     }
 
     private function buildTree($grouped, $progress, &$root)
@@ -75,6 +68,9 @@ class ProgressController extends CoursewareStudipController
                 );
                 $maxGrades = array_map(
                     function ($block) use ($progress) {
+                        if ($progress[$block['id']]['max_grade'] == null) {
+                            return 1;
+                        }
                         return (float) $progress[$block['id']]['max_grade'];
                     },
                     $root['children']
@@ -86,7 +82,7 @@ class ProgressController extends CoursewareStudipController
                     $root['progress'] = 0;
                 }
             } else {
-                $root['progress'] = 0;
+                $root['progress'] = 1;
             }
         }
     }

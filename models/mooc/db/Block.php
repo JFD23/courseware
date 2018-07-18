@@ -63,9 +63,6 @@ class Block extends \SimpleORMap implements \Serializable
         $this->registerCallback('after_delete', 'destroyUserProgress');
         $this->registerCallback('after_delete', 'updatePositionsAfterDelete');
 
-        $events = words('after_update after_store after_delete');
-        $this->registerCallback($events, 'callbackToMetrics');
-
         parent::__construct($id);
     }
 
@@ -100,6 +97,11 @@ class Block extends \SimpleORMap implements \Serializable
         }
     }
 
+    public function getNewPosition($parent_id)
+    {
+        return static::countBySQL( 'parent_id = ? ORDER BY position ASC', array($parent_id));
+    }
+
     public function getAncestors()
     {
         $ancestors = array();
@@ -130,6 +132,11 @@ class Block extends \SimpleORMap implements \Serializable
     public static function findCourseware($cid)
     {
         return current(self::findBySQL('seminar_id = ? AND type = ? LIMIT 1', array($cid, 'Courseware')));
+    }
+
+    public function getCoursewareOfThisBlock()
+    {
+        return static::findOneBySQL('seminar_id = ? AND type = ? LIMIT 1', array($this->seminar_id, 'Courseware'));
     }
 
     /**
@@ -286,16 +293,6 @@ class Block extends \SimpleORMap implements \Serializable
         $this->setNew($is_new);
     }
 
-    public function callbackToMetrics($callback_type)
-    {
-        if ($this->type) {
-            $metric = sprintf('moocip.block.%s.%s',
-                              strtolower($this->type),
-                              substr(strtolower($callback_type), strlen('after_')));
-            \Metrics::increment($metric);
-        }
-    }
-
     // has the given user completed (progress = 100%) this content
     // block or all of its descendent content blocks
     public function hasUserCompleted($uid)
@@ -352,5 +349,10 @@ class Block extends \SimpleORMap implements \Serializable
                        (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
                        substr($hash, 20, 12)
         );
+    }
+    
+    public function belongesToCourse($cid)
+    {
+        return $this->seminar_id == $cid;
     }
 }

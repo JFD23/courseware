@@ -22,17 +22,17 @@
     {{#file}}
         {{#download_access}}
             <div class="download-file">
-                <div class="cw-download-info" > &nbsp; {{file}} &nbsp; <span>{{file_name}}</span></div>
+                <div class="cw-download-info" > &nbsp; {{file}} </div>
                  <div class="cw-download-button-wrapper">
-                    <a href="../../sendfile.php?force_download=1&type={{#url}}6{{/url}}{{^url}}0{{/url}}&file_id={{file_id}}&file_name={{file_name}}" target="_blank"> 
-                        <button name="download" class="cw-download-button" style="display: inline-block;">download</button>
+                    <a href="{{url}}"> 
+                        <button name="download" class="cw-download-button" style="display: inline-block;">{{#i18n}}Herunterladen{{/i18n}}</button>
                     </a> 
                 </div>
             </div>
         {{/download_access}}
         {{^download_access}}
             <div class="messagebox messagebox_info">
-                {{#i18n}}Wegen des gew‰hlten Lizenzstatus kˆnnen Sie diese Datei nicht herunterladen.{{/i18n}}
+                {{#i18n}}Wegen des gew√§hlten Lizenzstatus k√∂nnen Sie diese Datei nicht herunterladen.{{/i18n}}
             </div>
         {{/download_access}}
     {{/file}}
@@ -47,6 +47,6 @@
 {{/inactive}}
 {{#inactive}}
     <div class="messagebox messagebox_info">
-        {{#i18n}}Dieser Block steht Ihnen erst zur Verf¸gung, sobald Sie die vorhergehenden Abschnitte erfolgreich abgeschloﬂen haben.{{/i18n}}
+        {{#i18n}}Dieser Block steht Ihnen erst zur Verf√ºgung, sobald Sie die vorhergehenden Abschnitte erfolgreich abgeschlo√üen haben.{{/i18n}}
     </div>
 {{/inactive}}

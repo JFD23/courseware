@@ -27,7 +27,7 @@ class XmlImport implements ImportInterface
     /**
      * {@inheritdoc}
      */
-    public function import($path, Courseware $courseware)
+    public function import($path, Courseware $courseware, $folder)
     {
         $dataFile = $path.'/data.xml';
         $document = new \DOMDocument();
@@ -41,7 +41,7 @@ class XmlImport implements ImportInterface
         foreach ($coursewareNode->childNodes as $child) {
             if ($child instanceof \DOMElement) {
                 if  ($child->tagName === 'file') {
-                    $this->processFile($child, $courseware, $path, $files);
+                    $this->processFile($child, $courseware, $path, $files, $folder);
                 }
             }
         }
@@ -73,39 +73,31 @@ class XmlImport implements ImportInterface
      * @param array       $files      Mapping of original file ids to new
      *                                document instances
      */
-    private function processFile(\DOMElement $node, Courseware $courseware, $path, &$files)
+    private function processFile(\DOMElement $node, Courseware $courseware, $path, &$files, $folder)
     {
         /** @var \Seminar_User $user */
         global $user;
-
-        $folder = \TreeAbstract::getInstance('StudipDocumentTree', array('range_id' => $courseware->getModel()->seminar_id));
-        $folders = $folder->getKids($courseware->getModel()->seminar_id);
         $originId = $node->getAttribute('id');
-        $filename = utf8_decode($node->getAttribute('filename'));
-        $sourceFile = $path.'/'.$originId.'/'.$filename;
-        $data = array(
-            'range_id' => $folders[0],
-            'user_id' => $user->cfg->getUserId(),
-            'seminar_id' => $courseware->getModel()->seminar_id,
-            'name' => utf8_decode($node->getAttribute('name')),
-            'description' => utf8_decode($node->textContent),
-            'filename' => $filename,
-            'filesize' => utf8_decode($node->getAttribute('filesize')),
-            'url' => utf8_decode($node->getAttribute('url')),
-            'author_name' => $user->getFullName(),
-        );
-
-        if (file_exists($sourceFile)) {
-            // the file is part of the uploaded ZIP archive
-            $document = \StudipDocument::createWithFile($sourceFile, $data);
+        $filename = $node->getAttribute('filename');
+        
+        // is this file already stored
+        $stored_file = \FileRef::findOneBySQL('name = ? AND folder_id = ?', array($node->getAttribute('name'), $folder->id));
+        if(!$stored_file) {
+            $file = [
+                        'name'     => $filename,
+                        'type'     => mime_content_type($path.'/'.$originId.'/'.$filename),
+                        'tmp_name' => $path.'/'.$originId.'/'.$filename,
+                        'url'      => $node->getAttribute('url'),
+                        'size'     => $node->getAttribute('filesize'),
+                        'user_id'  => $user->id,
+                        'error'    => ""
+                    ];
+            $new_reference = $folder->createFile($file);
         } else {
-            // the file is referenced by URL
-            $document = new \StudipDocument();
-            $document->setData($data);
-            $document->store();
+            $new_reference = $stored_file;
         }
 
-        $files[$originId] = $document;
+        $files[$originId] = $new_reference;
     }
 
     /**
@@ -122,9 +114,9 @@ class XmlImport implements ImportInterface
             array(
                 'type'       => 'Chapter',
                 'parent'     => $courseware->getModel(),
-                'title'      => utf8_decode($node->getAttribute('title')),
+                'title'      => $node->getAttribute('title'),
                 'seminar_id' => $courseware->getModel()->seminar_id,
-                'uuid'       => utf8_decode($node->getAttribute('uuid'))
+                'uuid'       => $node->getAttribute('uuid')
             ));
 
         foreach ($node->childNodes as $childNode) {
@@ -157,9 +149,9 @@ class XmlImport implements ImportInterface
             array(
                 'type'       => 'Subchapter',
                 'parent'     => $chapter,
-                'title'      => utf8_decode($node->getAttribute('title')),
+                'title'      => $node->getAttribute('title'),
                 'seminar_id' => $chapter->seminar_id,
-                'uuid'       => utf8_decode($node->getAttribute('uuid'))
+                'uuid'       => $node->getAttribute('uuid')
             ));
 
         foreach ($node->childNodes as $childNode) {
@@ -192,9 +184,9 @@ class XmlImport implements ImportInterface
             array(
                 'type'       => 'Section',
                 'parent'     => $subChapter,
-                'title'      => utf8_decode($node->getAttribute('title')),
+                'title'      => $node->getAttribute('title'),
                 'seminar_id' => $subChapter->seminar_id,
-                'uuid'       => utf8_decode($node->getAttribute('uuid'))
+                'uuid'       => $node->getAttribute('uuid')
             ));
 
         /** @var \Mooc\UI\Section\Section $uiSection */
@@ -224,9 +216,9 @@ class XmlImport implements ImportInterface
         $section = $this->createBlock(
             array(
                 'type'       => 'Section',
-                'title'      => utf8_decode($node->getAttribute('title')),
-                'seminar_id' => $subChapter->seminar_id,
-                'uuid'       => utf8_decode($node->getAttribute('uuid'))
+                'title'      => $node->getAttribute('title'),
+                'seminar_id' => $sub_chapter->seminar_id,
+                'uuid'       => $node->getAttribute('uuid')
             ));
 
         // store aside section's ID in sub/chapter's field
@@ -262,14 +254,14 @@ class XmlImport implements ImportInterface
 
         $block = $this->createBlock(
             array(
-                'type'       => utf8_decode($node->getAttribute('type')),
+                'type'       => $node->getAttribute('type'),
                 'sub_type'   => $node->hasAttribute('sub-type')
-                                ? utf8_decode($node->getAttribute('sub-type'))
+                                ? $node->getAttribute('sub-type')
                                 : null,
                 'parent'     => $section->getModel(),
-                'title'      => utf8_decode($node->getAttribute('title')),
+                'title'      => $node->getAttribute('title'),
                 'seminar_id' => $section->getModel()->seminar_id,
-                'uuid'       => utf8_decode($node->getAttribute('uuid'))
+                'uuid'       => $node->getAttribute('uuid')
             ));
 
         $section->updateIconWithBlock($block);
@@ -289,7 +281,7 @@ class XmlImport implements ImportInterface
             }
 
             if ($attribute->namespaceURI !== null) {
-                $properties[$attribute->name] = utf8_decode($attribute->value);
+                $properties[$attribute->name] = $attribute->value;
             }
         }
 
@@ -325,6 +317,7 @@ class XmlImport implements ImportInterface
 
         if ($parent) {
             $block->parent = $parent;
+            $block->position = $block->getNewPosition($parent->id);
         }
 
         if ($uuid) {

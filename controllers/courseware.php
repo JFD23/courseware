@@ -73,7 +73,7 @@ class CoursewareController extends CoursewareStudipController
                 chdate >= :last_visit
         ");
         $stmt->bindParam(":cid", $this->container['cid']);
-        $stmt->bindParam(":last_visit", object_get_visit($_SESSION['SessionSeminar'], "courseware"));
+        $stmt->bindParam(":last_visit", object_get_visit($this->container['cid'], "courseware"));
         $stmt->execute();
         $new_ones = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $this->new_ones = $new_ones;
@@ -302,7 +302,7 @@ class CoursewareController extends CoursewareStudipController
         // this setting
         if ($perm === Courseware::EDITING_PERMISSION_DOZENT &&
             $this->container['current_user']->getPerm($this->container['cid']) === 'tutor') {
-            throw new Trails_Exception(401, _cw("Tutoren können diese Einstellung nicht speichern."));
+            throw new Trails_Exception(401, _cw("Tutoren kÃ¶nnen diese Einstellung nicht speichern."));
         }
 
         if (!$this->courseware_block->setEditingPermission($perm)) {

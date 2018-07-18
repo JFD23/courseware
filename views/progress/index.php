@@ -8,12 +8,10 @@ $progress = function ($block, $format = "") {
 $monate = array(1=>"Jan", 2=>"Feb", 3=>"Mär", 4=>"Apr", 5=>"Mai", 6=>"Jun", 7=>"Jul", 8=>"Aug", 9=>"Sep", 10=>"Okt",11=>"Nov", 12=>"Dez");
 ?>
 
-<h1><?= $courseware['title'] ?></h1>
-<br>
 <ul id="overview-chapter-nav">
     <li class="overview-chapter-nav-arrow" id="overview-chapter-nav-left"></li>
     <li id="chapter-container" style="width:calc(100% - 140px);">
-            <ul style="width: <?= count($courseware['children'])*200;?>px;" id="chapter-list">
+            <ul style="width: <?= count($courseware['children'])*203;?>px;" id="chapter-list">
                 <? foreach ($courseware['children'] as $chapter) : ?>
                     <li class="course-box" data-course="chapter-<?= $chapter['id'] ?>">
                         <p><?= htmlReady($chapter['title']) ?></p>
@@ -55,8 +53,12 @@ $monate = array(1=>"Jan", 2=>"Feb", 3=>"Mär", 4=>"Apr", 5=>"Mai", 6=>"Jun", 7=>
                     <? foreach ($subchapter['children'] as $section) : ?>
                       <li>
                         <a href="<?= $controller->url_for('courseware', array('selected' => $section['id'])) ?>"
-                           title="<?= htmlReady($section['title']) ?>"
-                           data-progress="<?= $progress($section) ?>">
+                           data-progress="<?= $progress($section) ?>"><span class="progress-section-title">
+                                <?  $title = htmlReady($section['title']);
+                                    if(strlen($title) > 16) { $title =  substr($title, 0, 12) . "...";}
+                                    echo $title;
+                                ?>
+                            </span>
                           <progress value=<?= $progress($section) ?> max=100></progress>
                         </a>
                       </li>

@@ -52,7 +52,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         return 'Courseware';
     }
 
-    // bei Aufruf des Plugins über plugin.php/mooc/...
+    // bei Aufruf des Plugins Ã¼ber plugin.php/mooc/...
     public function initialize()
     {
         //PageLayout::setTitle($_SESSION['SessSemName']['header_line'] . ' - ' . $this->getPluginname());
@@ -84,7 +84,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         $navigation->addSubnavigation(
             'news',
             new Navigation(
-                _cw('Letzte Änderungen'),
+                _cw('Letzte Ã„nderungen'),
                 PluginEngine::getURL($this, compact('cid'), 'courseware/news', true)
             )
         );
@@ -100,13 +100,13 @@ class Courseware extends StudIPPlugin implements StandardPlugin
             $cpoUrl = PluginEngine::getURL($this, compact('cid'), 'cpo', true);
             $navigation->addSubnavigation(
                 'progressoverview',
-                new Navigation(_cw('Fortschrittsübersicht'), $cpoUrl)
+                new Navigation(_cw('FortschrittsÃ¼bersicht'), $cpoUrl)
             );
 
             $postoverviewUrl = PluginEngine::getURL($this, compact('cid'), 'cpo/postoverview', true);
             $navigation->addSubnavigation(
                 'postoverview',
-                new Navigation(_cw('Diskussionsübersicht'), $postoverviewUrl)
+                new Navigation(_cw('DiskussionsÃ¼bersicht'), $postoverviewUrl)
             );
 
             $exportUrl = PluginEngine::getURL($this, compact('cid'), 'export', true);
@@ -127,7 +127,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
                 $progressUrl = PluginEngine::getURL($this, compact('cid'), 'progress', true);
                 $navigation->addSubnavigation(
                     'progress',
-                    new Navigation(_cw('Fortschrittsübersicht'), $progressUrl)
+                    new Navigation(_cw('FortschrittsÃ¼bersicht'), $progressUrl)
                 );
             }
         }
@@ -255,7 +255,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
 
     public function perform($unconsumedPath)
     {
-        if (!$this->isActivated($this->container['cid'])) {
+        if ((!$this->isActivated($this->container['cid']))&& ($_SERVER['REQUEST_METHOD'] === 'GET')) {
             throw new AccessDeniedException('plugin not activated for this course!');
         }
 
@@ -265,7 +265,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
 
         // load i18n only if plugin is un use
         PageLayout::addHeadElement('script', array(),
-            "String.toLocaleString('".PluginEngine::getLink($this, array('cid' => null), 'localization')."');");
+            "String.toLocaleString('".PluginEngine::getLink($this, array('cid' => $this->container['cid']), 'localization')."');");
 
         $dispatcher = new Trails_Dispatcher(
             $this->getPluginPath(),
@@ -281,7 +281,7 @@ class Courseware extends StudIPPlugin implements StandardPlugin
      */
     public function getContext()
     {
-        return Request::option('cid') ?: $GLOBALS['SessionSeminar'];
+        return $GLOBALS['SessionSeminar'];
     }
 
     /**
@@ -360,13 +360,13 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         $can_edit = $GLOBALS['perm']->have_studip_perm('tutor', $this->container['cid']);
 
         if ($can_edit) {
-            $description = _cw('Mit dem Courseware-Modul können Sie interaktive Lernmodule in Stud.IP erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fügen Sie Abschnitte und Blöcke (Text und Bild, Video, Diskussion, Quiz)  hinzu. Aufgaben erstellen und verwalten Sie mit dem Vips-Plugin und binden Sie dann in einen Courseware-Abschnitt ein.');
+            $description = _cw('Mit dem Courseware-Modul kÃ¶nnen Sie interaktive Lernmodule in Stud.IP erstellen. Strukturieren Sie Ihre Inhalte in Kapiteln und Unterkapiteln. Schalten Sie zwischen Teilnehmenden-Sicht und Editier-Modus um und fÃ¼gen Sie Abschnitte und BlÃ¶cke (Text und Bild, Video, Diskussion, Quiz)  hinzu. Aufgaben erstellen und verwalten Sie mit dem Vips-Plugin und binden Sie dann in einen Courseware-Abschnitt ein.');
             Helpbar::get()->addPlainText(_cw('Information'), $description, 'icons/white/info-circle.svg');
 
-            $tip = _cw("Sie können den Courseware-Reiter umbenennen! Wählen Sie dazu den Punkt 'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden.");
+            $tip = _cw("Sie kÃ¶nnen den Courseware-Reiter umbenennen! WÃ¤hlen Sie dazu den Punkt 'Einstellungen', den Sie im Editiermodus unter der Seitennavigation finden.");
             Helpbar::get()->addPlainText(_cw('Tipp'), $tip, 'icons/white/info-circle.svg');
         } else {
-            $description = _cw('Über dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule direkt in Stud.IP zur Verfügung. Die Module können Texte, Bilder, Videos, Kommunikationselemente und kleine Quizzes beinhalten. Ihren Bearbeitungsfortschritt sehen Sie auf einen Blick im Reiter Fortschrittsübersicht.');
+            $description = _cw('Ãœber dieses Modul stellen Ihre Lehrenden Ihnen multimediale Lernmodule direkt in Stud.IP zur VerfÃ¼gung. Die Module kÃ¶nnen Texte, Bilder, Videos, Kommunikationselemente und kleine Quizzes beinhalten. Ihren Bearbeitungsfortschritt sehen Sie auf einen Blick im Reiter FortschrittsÃ¼bersicht.');
             Helpbar::get()->addPlainText(_cw('Hinweis'), $description, 'icons/white/info-circle.svg');
         }
     }
@@ -399,17 +399,16 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         // FIXME: hier den Courseware-Block in die Hand zu bekommen,
         //        ist definitiv falsch.
         $courseware = $this->container['current_courseware'];
-        if ($courseware){
-            // hide blubber tab if the discussion block is active
-            if ($courseware->getDiscussionBlockActivation()) {
-                Navigation::removeItem('/course/blubberforum');
-            }
-        
-            // deactivate Vips-Plugin for students if this course is capture by the mooc-plugin
-            if ((!$GLOBALS['perm']->have_studip_perm('tutor', $this->container['cid'])) && $courseware->getVipsTabVisible()) {
-                if (Navigation::hasItem('/course/vipsplugin')) {
-                    Navigation::removeItem('/course/vipsplugin');
-                }
+
+        // hide blubber tab if the discussion block is active
+        if ($courseware->getDiscussionBlockActivation()) {
+            Navigation::removeItem('/course/blubberforum');
+        }
+
+        // deactivate Vips-Plugin for students if this course is capture by the mooc-plugin
+        if ((!$GLOBALS['perm']->have_studip_perm('tutor', $this->container['cid'])) && $courseware->getVipsTabVisible()) {
+            if (Navigation::hasItem('/course/vipsplugin')) {
+                Navigation::removeItem('/course/vipsplugin');
             }
         }
     }
@@ -430,13 +429,102 @@ class Courseware extends StudIPPlugin implements StandardPlugin
         // create a widget for given id (md5 hash - ensured by markup regex)
         return '<span class="mooc-forumblock">'
             .'<a href="'.PluginEngine::getLink('courseware', array('selected' => $matches[2]), 'courseware').'">'
-            ._cw('Zurück zur Courseware')
+            ._cw('ZurÃ¼ck zur Courseware')
             .'</a></span>';
     }
 
     public function getDisplayTitle()
     {
         return _('Courseware');
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * *
+     * * * * Functions for DatenschutzPlugin * * * * *
+     * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    /*
+     * Returns the tables containing user data.
+     * the array consists of the tables containing user data
+     * the expected format for each table is:
+     * $array[ table display name ] = [ 'table_name' => name of the table, 'table_content' => array of db rows containing userdata]
+     * @param string $user_id
+     * @return array
+     */
+    public static function getUserdataInformation($user_id)
+    {
+        $db = DBManager::get();
+
+        $stmt = $db->prepare('
+            SELECT
+                *
+            FROM
+                mooc_userprogress
+            WHERE
+                user_id = :uid
+        ');
+        $stmt->bindParam(':uid', $user_id);
+        $stmt->execute();
+        $user_progress = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $plugin_data = array();
+        $plugin_data['Courseware - Nutzerfortschritt'] = ['table_name' => 'mooc_userprogress', 'table_content' => $user_progress];
+
+        $stmt = $db->prepare('
+            SELECT
+                *
+            FROM
+                mooc_fields
+            WHERE
+                user_id = :uid
+        ');
+        $stmt->bindParam(':uid', $user_id);
+        $stmt->execute();
+        $block_content = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $plugin_data['Courseware - BlÃ¶cke'] = ['table_name' => 'mooc_userprogress', 'table_content' => $block_content];
+
+        return $plugin_data;
+    }
+
+    /**
+     * Returns the filerefs of given user.
+     * @param string $user_id
+     * @return array
+     */
+    public static function getUserFileRefs($user_id)
+    {
+        return array();
+    }
+
+    /**
+     * Deletes the table content containing user data.
+     * @param string $user_id
+     * @return boolean
+     */
+    public static function deleteUserdata($user_id)
+    {
+        $db = DBManager::get();
+        $exec = false;
+
+        $stmt = $db->prepare('
+            DELETE FROM
+                mooc_userprogress 
+            WHERE 
+                user_id = :uid
+        ');
+        $stmt->bindParam(':uid', $user_id);
+        $exec = $stmt->execute();
+
+        $stmt = $db->prepare('
+            DELETE FROM
+                mooc_fields 
+            WHERE 
+                user_id = :uid
+            AND 
+                (name = "visited" OR name = "lastSelected")
+        ');
+        $stmt->bindParam(':uid', $user_id);
+        $exec = $stmt->execute();
+
+        return $exec;
     }
 
 }

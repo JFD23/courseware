@@ -1,6 +1,200 @@
+@import 'mixins';
+
+#courseware-progress-index #layout_container,
+#courseware-cpo-index #layout_container {
+
+  h1 {
+    border: none;
+    padding-left: 0;
+  }
+
+  table.chapters {
+    width: 100%;
+    border-collapse: collapse;
+    border: solid thin #ddd;
+
+    tr:nth-child(even) {
+      background: #f8f8f8;
+    }
+
+    tr + tr {
+      border-top: 1px solid #ddd;
+    }
+
+  }
+
+  .chapter th, .subchapter th {
+    text-align: left;
+    font-weight: 700;
+    line-height: 1.1;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+    color: #444;
+    > a {
+        display: block;
+    }
+  }
+
+  .chapter th {
+    font-size: 1.4em;
+    padding-left: 0.5em;
+  }
+
+  .subchapter th {
+    font-size: 1.1em;
+    padding-left: 1.2em;
+    white-space: nowrap;
+    width: 10%;
+  }
+
+th.subchapter-description {
+    progress {
+        /* Reset the default appearance */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        /* Get rid of default border in Firefox. */
+        border: none;
+
+        /* Dimensions */
+        width: 100%;
+        height: 20px;
+
+        /* For IE10 */
+        color: #006533;
+        /*background: #006533;*/
+
+        font-size: .6em;
+        line-height: 1.5em;
+        
+      }
+
+      progress::-webkit-progress-value {
+        background: #28497c;
+      }
+
+      progress::-webkit-progress-bar {
+        background: #bbbbbb;
+      }
+
+      progress::-moz-progress-bar {
+        background: #28497c;
+      }
+      p {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        position: relative;
+        width: 100%;
+
+        &:after {
+          content: attr(data-progress) '%';
+          font-size: 14px;
+          color: white;
+          position: absolute;
+          top: 0;
+          left: 0.5em;
+          line-height: 1.5em;
+        }
+
+      }
+
+}
+
+  ol.sections {
+    list-style: none;
+    padding: 5px;
+    margin: 0 0 0 3em;
+
+    li {
+      progress {
+        /* Reset the default appearance */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        /* Get rid of default border in Firefox. */
+        border: none;
+
+        /* Dimensions */
+        width: 100%;
+        height: 20px;
+
+        /* For IE10 */
+        color: #006533;
+        /*background: #006533;*/
+
+        font-size: .6em;
+        line-height: 1.5em;
+      }
+
+      progress::-webkit-progress-value {
+        background: #28497c;
+      }
+
+      progress::-webkit-progress-bar {
+        background: #bbbbbb;
+      }
+
+      progress::-moz-progress-bar {
+        background: #28497c;
+      }
+
+      a {
+        box-sizing: border-box;
+        padding: 0.5em 1em;
+        margin: -0.4em 0 0 0;
+        display: inline-block;
+        position: relative;
+        
+        span.progress-section-title {
+            font-size: 0.8em;
+        }
+
+        &:after {
+          content: attr(data-progress) '%';
+          font-size: 14px;
+          color: white;
+          position: absolute;
+          left: 1.5em;
+          line-height: 1.5em;
+        }
+
+      }
+    }
+
+    // flexbox fallbacks
+    li {
+      float: left;
+      a {
+        width: 8em;
+      }
+    }
+  }
+
+
+  article.thread {
+    margin-top: 3em;
+  }
+
+  // include blubber-style discussion threads' styling
+  .discussion-thread();
+}
+
+// small avatars in participant list
+.user_avatar .avatar-normal {
+  border-radius: 60px;
+  height: 30px;
+  margin: 3px 5px -10px 3px;
+  width: 30px;
+}
+
 #overview-usage {
   float:right;
   margin-bottom: 2em;
+  cursor: help;
   ul {
     list-style: none;
   }
@@ -112,6 +306,7 @@
   background-color: #fff;
   float: right;
   margin-right: 0.5em;
+  cursor: help;
 
   .overview-date-month {
     background-color: #e74c3c;
@@ -401,10 +596,24 @@
     border: solid thin #ccc;
     padding: 0.5em 1em;  
     margin-bottom: 1em;
-}
 
-.post-overview-highlight { 
-    border: solid 2px #28497c;
+    &.post-overview-highlight { 
+        border: solid thin #28497c;
+    }
+
+    &.post-overview-thread-selected { 
+        border: solid 4px #28497c;
+    }
+
+    .edit-thread-title-button {
+        cursor: pointer;
+    }
+
+    .edit-thread-button {
+        cursor: pointer;
+        border: none;
+        background-color: transparent;
+    }
 }
 
 .post-overview-block-link{
@@ -418,4 +627,44 @@
 
 .thread h3 {
     padding: 0 1em;
+}
+
+.talk-bubble.hidden-post {
+    border: solid #e74c3c;
+    
+    &::after {
+        border: none;
+    }
+}
+
+.post-hide, .post-show {
+    .courseware-btn();
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: 6px center;
+    float: right;
+    margin: 5px 0;
+}
+
+.post-hide {
+    background-image: url("../../../../../assets/images/icons/blue/remove-circle.svg");
+    &:hover {
+        background-image: url("../../../../../assets/images/icons/white/remove-circle.svg");
+    }
+}
+
+.post-show {
+    background-image: url("../../../../../assets/images/icons/blue/add-circle.svg");
+    &:hover {
+        background-image: url("../../../../../assets/images/icons/white/add-circle.svg");
+    }
+}
+
+.post-is-hidden-info {
+    padding: 0.5em 1em 0 1em;
+    color: #e74c3c;
+    font-weight: 600;
+    p {
+        margin: 0;
+    }
 }

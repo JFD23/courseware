@@ -67,7 +67,7 @@ class ImportController extends CoursewareStudipController
         $dataFile = $tempDir.'/data.xml';
 
         if (!is_file($dataFile)) {
-            $errors[] = _cw('Import-Archiv enthält keine Datendatei data.xml.');
+            $errors[] = _cw('Import-Archiv enthÃ¤lt keine Datendatei data.xml.');
 
             return false;
         }
@@ -76,7 +76,7 @@ class ImportController extends CoursewareStudipController
         $validationErrors = $validator->validate(file_get_contents($dataFile));
 
         if (count($validationErrors) > 0) {
-            $errors[] = _cw('Die Datendatei data.xml enthält kein valides XML.');
+            $errors[] = _cw('Die Datendatei data.xml enthÃ¤lt kein valides XML.');
 
             foreach ($validationErrors as $validationError) {
                 $errors[] = $validationError;
@@ -93,14 +93,29 @@ class ImportController extends CoursewareStudipController
         // create a temporary directory
         $tempDir = $GLOBALS['TMP_PATH'].'/'.uniqid();
         mkdir($tempDir);
-        unzip_file($filename, $tempDir);
+        $extracted = Studip\ZipArchive::extractToPath($filename, $tempDir);
+        if (!$extracted) {
+            $this->errors[] = _cw('Das Import-Archiv ist beschÃ¤digt.');
+            return false;
+        }
+
+        $root_folder = Folder::findTopFolder($GLOBALS['SessionSeminar']);
+        $parent_folder = FileManager::getTypedFolder($root_folder->id);
+        // create new folder for import
+        $request = array('name' => 'Courseware-Import '.date("d.m.Y", time()), 'description' => 'folder for imported courseware content');
+        $new_folder = new StandardFolder();
+        $new_folder->setDataFromEditTemplate($request);
+        $new_folder->user_id = User::findCurrent()->id;
+        $courseware_folder = $parent_folder->createSubfolder($new_folder);
+
+        $install_folder = FileManager::getTypedFolder($courseware_folder->id);
 
         if ($this->validateUploadFile($tempDir, $this->errors)) {
             $courseware = $this->container['current_courseware'];
             $importer = new XmlImport($this->plugin->getBlockFactory());
             $redirect = true;
             try {
-                $importer->import($tempDir, $courseware);
+                $importer->import($tempDir, $courseware, $install_folder);
             } catch (Exception $e){
                 $this->errors[] = $e;
                 $redirect = false;
