@@ -1,18 +1,19 @@
-section.PortfolioBlock {
+@import '../../../assets/less/mixins';
 
+section.HtmlBlock {
   .controls button.no-sorting {
     visibility: hidden;
   }
 
   textarea {
     width: 100%;
-    background-color: red;
+  }
+
+  .cke_editable {
+    min-height: 12em;
   }
 
   div.content {
-
-    background-color: #667788;
-
     img {
       max-width: 100%;
     }
@@ -26,14 +27,16 @@ section.PortfolioBlock {
   }
 }
 
-.content{
-
-  display: none;
-
-}
-
-.ePortfolioBlock {
-
-  background-color: #ff5566;
-
+/* sidebar special */
+.cw-sidebar {
+    .cw-html-wrapper {
+        
+        .cw-html-header {
+            .cw-block-header-sidebar();
+            height: 20px;
+        }
+    }
+    .content {
+        padding: 0 5px;
+    }
 }

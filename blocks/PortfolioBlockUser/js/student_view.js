@@ -1,6 +1,5 @@
-import $ from 'jquery'
+import jQuery from 'jquery'
 import StudentView from 'js/student_view'
-import helper from 'js/url'
 
 export default StudentView.extend({
     events: {
@@ -17,7 +16,7 @@ export default StudentView.extend({
         return this;
     },
 
-    postRender() {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.el]);
-    }
+  postRender() {
+    window.MathJax.Hub.Queue([ 'Typeset', window.MathJax.Hub, this.el ]);
+  }
 });

@@ -11,13 +11,13 @@ class PortfolioBlockSupervisor extends Block
 {
     const NAME = 'Notiz für Supervisor';
 
-    function initialize()
+    public function initialize()
     {
         $this->defineField('content', \Mooc\SCOPE_BLOCK, '');
         $this->defineField('supervisorcontent', \Mooc\SCOPE_BLOCK, '');
     }
 
-    function student_view()
+    public function student_view()
     {
         $cid = $this->container['cid'];
     
@@ -42,10 +42,16 @@ class PortfolioBlockSupervisor extends Block
             $owner = false;
         }
 
+		$content = $this->content;
+        if (strpos($content, "<!DOCTYPE html") == 0 ) {
+            $content = \STUDIP\Markup::markAsHtml($content);
+        }
+		$content = formatReady($content);
+
         $this->setGrade(1.0);
         if ($supervisor || $owner) {
             return array(
-                'content' => formatReady($this->content),
+                'content' => $content,
                 'supervisorcontent' => formatReady($this->supervisorcontent),
                 'show_note' => true,
                 'supervisor' => $supervisor,
@@ -60,38 +66,62 @@ class PortfolioBlockSupervisor extends Block
         }
     }
 
-    function author_view()
+    public function author_view()
     {
         $this->authorizeUpdate();
+        $content = htmlReady($this->content);
 
-        if ($this->container['wysiwyg_refined']) {
-            $content = wysiwygReady($this->content);
-        } else {
-            $content = htmlReady($this->content);
-        }
         return compact('content');
     }
 
     /**
      * Updates the block's contents.
      *
-     * @param array $data                  The request data
+     * @param array $data The request data
      *
      * @return array The block's data
      */
     public function save_handler(array $data)
     {
         $this->authorizeUpdate();
-        // second param in if-block is special case for uos. old studip with new wysiwyg
-        if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
-            $this->content = \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify((string) $data['content']));
+        $content = \STUDIP\Markup::purifyHtml((string) $data['content']);
+        if ($content == "") {
+            $this->content = "";
         } else {
-          $this->content = (string) $data['content'];
+            $dom = new \DOMDocument();
+            $dom->loadHTML($content);
+            $xpath = new \DOMXPath($dom);
+            $hrefs = $xpath->evaluate("//a");
+            for ($i = 0; $i < $hrefs->length; $i++) {
+                $href = $hrefs->item($i);
+                if($href->getAttribute("class") == "link-extern") {
+                $href->removeAttribute('target');
+                $href->setAttribute("target", "_blank");
+                }
+            }
+            $this->content = $dom->saveHTML();
+        }
+		$supervisorcontent = \STUDIP\Markup::purifyHtml((string) $data['supervisorcontent']);
+        if ($supervisorcontent == "") {
+            $this->supervisorcontent = "";
+        } else {
+            $dom = new \DOMDocument();
+            $dom->loadHTML($supervisorcontent);
+            $xpath = new \DOMXPath($dom);
+            $hrefs = $xpath->evaluate("//a");
+            for ($i = 0; $i < $hrefs->length; $i++) {
+                $href = $hrefs->item($i);
+                if($href->getAttribute("class") == "link-extern") {
+                $href->removeAttribute('target');
+                $href->setAttribute("target", "_blank");
+                }
+            }
+            $this->supervisorcontent = $dom->saveHTML();
         }
 
         return array(
-            'content' => formatReady($this->content),
-            'supervisorcontent' => formatReady($this->supervisorcontent)
+            'content' => $this->content,
+            'supervisorcontent' => $this->supervisorcontent
         );
     }
     
@@ -141,9 +171,7 @@ class PortfolioBlockSupervisor extends Block
             if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
                 continue;
             }
-
             $block = $this;
-
             $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element) {
                 $element->setAttribute('href', $block->buildUrl('http://internal.moocip.de', '/sendfile.php', $components));
             });
@@ -154,19 +182,13 @@ class PortfolioBlockSupervisor extends Block
             if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
                 continue;
             }
-
             $block = $this;
-
             $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element) {
                 $element->setAttribute('src', $block->buildUrl('http://internal.moocip.de', '/sendfile.php', $components));
             });
         }
 
-        if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
-            return \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify($document->saveHTML()));
-        } else {
-            return $document->saveHTML();
-        }
+        return $document->saveHTML();
     }
 
     /**
@@ -233,16 +255,14 @@ class PortfolioBlockSupervisor extends Block
     public function importContents($contents, array $files)
     {
         $document = new \DOMDocument();
-        $document->loadHTML(utf8_decode($contents));
+        $document->loadHTML(studip_utf8decode($contents));
 
         $anchorElements = $document->getElementsByTagName('a');
         foreach ($anchorElements as $element) {
             if (!$element instanceof \DOMElement || !$element->hasAttribute('href')) {
                 continue;
             }
-
             $block = $this;
-
             $this->applyCallbackOnInternalUrl($element->getAttribute('href'), function ($components) use ($block, $element, $files) {
                 parse_str($components['query'], $queryParams);
                 $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
@@ -256,9 +276,7 @@ class PortfolioBlockSupervisor extends Block
             if (!$element instanceof \DOMElement || !$element->hasAttribute('src')) {
                 continue;
             }
-
             $block = $this;
-
             $this->applyCallbackOnInternalUrl($element->getAttribute('src'), function ($components) use ($block, $element, $files) {
                 parse_str($components['query'], $queryParams);
                 $queryParams['file_id'] = $files[$queryParams['file_id']]->id;
@@ -266,12 +284,7 @@ class PortfolioBlockSupervisor extends Block
                 $element->setAttribute('src', $block->buildUrl($GLOBALS['ABSOLUTE_URI_STUDIP'], '/sendfile.php', $components));
             });
         }
-
-        if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
-            $this->content = \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify($document->saveHTML()));
-        } else {
-            $this->content = $document->saveHTML();
-        }
+        $this->content = \STUDIP\Markup::purifyHtml($document->saveHTML());
 
         $this->save();
     }
@@ -290,9 +303,7 @@ class PortfolioBlockSupervisor extends Block
         if (!\Studip\MarkupPrivate\MediaProxy\isInternalLink($url) && substr($url, 0, 25) !== 'http://internal.moocip.de') {
             return null;
         }
-
         $components = parse_url($url);
-
         if (
             isset($components['path'])
             && substr($components['path'], -13) == '/sendfile.php'

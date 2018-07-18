@@ -1,6 +1,5 @@
-import $ from 'jquery'
+import jQuery from 'jquery'
 import StudentView from 'js/student_view'
-import helper from 'js/url'
 
 export default StudentView.extend({
     events: {
@@ -19,7 +18,7 @@ export default StudentView.extend({
     },
 
     postRender() {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.el]);
+        window.MathJax.Hub.Queue([ 'Typeset', window.MathJax.Hub, this.el ]);
     },
     onSave(event) {
         var textarea = this.$("textarea"),
