@@ -92,6 +92,12 @@ class Courseware extends Block
         $this->branchComplete($tree);
         $cid = $this->container['cid'];
 
+        $seminar = \Seminar::getInstance($this->getModel()->seminar_id);
+        $status = $seminar->getStatus();
+        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+            $is_eportfolio = true;
+        }
+
         return array_merge($tree, array(
             'user_is_nobody'        => $this->getCurrentUser()->isNobody(),
             'user_may_author'       => $this->getCurrentUser()->canUpdate($this->_model),
@@ -104,7 +110,8 @@ class Courseware extends Block
             'sections_as_chapters'  => $this->sections_as_chapters,
             'isSequential'          => $this->progression == 'seq',
             'active_section'        => $active_section, 
-            'cw_title'              => $courseware->title
+            'cw_title'              => $courseware->title,
+            'is_eportfolio'         => $is_eportfolio
             )
         );
     }
@@ -436,11 +443,23 @@ class Courseware extends Block
             return null;
         }
 
+        $seminar = \Seminar::getInstance($child->seminar_id);
+        $status = $seminar->getStatus();
+        $editable = true;
+        if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
+            require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
+            if(\LockedBlock::isLocked($child->id)){
+                $editable =  false;
+            }
+        }
+
         if ($showFields) {
             $block = $this->getBlockFactory()->makeBlock($child);
             $json = $block->toJSON();
+            $json['editable'] = $editable;
         } else {
             $json = $child->toArray();
+            $json['editable'] = $editable;
         }
 
         if (!$child->isPublished()) {
@@ -517,7 +536,7 @@ class Courseware extends Block
             // aside section
             else {
                 // find aside's "parent" sub/chapter
-                // TODO: gruseliger Hack, um das Unter/Kapitel zu finden, in dem die Section eingehängt ist.
+                // TODO: gruseliger Hack, um das Unter/Kapitel zu finden, in dem die Section eingehï¿½ngt ist.
                 $field = current(\Mooc\DB\Field::findBySQL('user_id = "" AND name = "aside_section" AND json_data = ?', array(json_encode($block->id))));
 
                 return $field->block;

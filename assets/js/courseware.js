@@ -28,6 +28,10 @@ import 'Section/js/Section'
 import 'TestBlock/js/TestBlock'
 import 'VideoBlock/js/VideoBlock'
 
+import 'PortfolioBlock/js/PortfolioBlock'
+import 'PortfolioBlockSupervisor/js/PortfolioBlockSupervisor'
+import 'PortfolioBlockUser/js/PortfolioBlockUser'
+
 $(document).ready(function () {
 
   function logError(error) {

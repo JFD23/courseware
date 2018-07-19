@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Mooc\UI\PortfolioBlockSupervisor;
 
 use Mooc\UI\Block;
@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlockSupervisor extends Block
 {
-    const NAME = 'Notiz für Supervisor';
+    const NAME = 'Notiz fÃ¼r Supervisor';
 
     public function initialize()
     {

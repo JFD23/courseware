@@ -1,7 +1,7 @@
 <div class=title>
   <h1>
     {{title}}
-    <span class=controls>
+    <span class="controls{{#editable}} editable{{/editable}}{{^editable}} not-editable{{/editable}}">
       <button class="edit" data-title="{{#i18n}}Abschnittstitel bearbeiten{{/i18n}}">{{#i18n}}Ändern{{/i18n}}</button>
       <button class="trash" data-title="{{#i18n}}Abschnitt löschen{{/i18n}}">{{#i18n}}Entfernen{{/i18n}}</button>
     </span>

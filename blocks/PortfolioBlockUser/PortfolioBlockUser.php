@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Mooc\UI\PortfolioBlockUser;
 
 use Mooc\UI\Block;
@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlockUser extends Block
 {
-    const NAME = 'öffentliche Notiz';
+    const NAME = 'Ã–ffentliche Notiz';
 
     public function initialize()
     {
@@ -28,7 +28,7 @@ class PortfolioBlockUser extends Block
         if (strpos($content, "<!DOCTYPE html") == 0 ) {
             $content = \STUDIP\Markup::markAsHtml($content);
         }
-        $show_note = ($this->container['current_user']->id == $owner)
+        $show_note = ($this->container['current_user']->id == $owner);
 		$content = formatReady($content);
         
         return array(

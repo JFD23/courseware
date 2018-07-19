@@ -3,6 +3,11 @@
   class="view-student{{#user_may_author}} user-may-author{{/user_may_author}}{{#user_is_nobody}} user-is-nobody{{/user_is_nobody}} loading"
   data-blockid="{{courseware.id}}"
   data-type=Courseware>
+  {{#is_eportfolio}}
+    <div class="cw-eportfolio-header">
+    <!--- TODO -->
+    </div>
+  {{/is_eportfolio}}
 
   <nav class="breadcrumb">
     <ul>

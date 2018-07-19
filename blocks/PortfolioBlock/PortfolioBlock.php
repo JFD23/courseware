@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Mooc\UI\PortfolioBlock;
 
 use Mooc\UI\Block;
@@ -29,7 +29,7 @@ class PortfolioBlock extends Block
         if (strpos($content, "<!DOCTYPE html") == 0 ) {
             $content = \STUDIP\Markup::markAsHtml($content);
         }
-        $show_note = ($this->container['current_user']->id == $owner)
+        $show_note = ($this->container['current_user']->id == $owner);
 		$content = formatReady($content);
         
         return array(
