@@ -6,6 +6,8 @@ use Mooc\UI\Block;
 class DownloadBlock extends Block 
 {
     const NAME = 'Download';
+    const BLOCK_CLASS = 'function';
+    const DESCRIPTION = 'Stellt eine Datei aus dem Dateibereich zum Download bereit';
 
     public function initialize()
     {
@@ -44,11 +46,7 @@ class DownloadBlock extends Block
             return array('inactive' => true);
         }
         $this->authorizeUpdate();
-        if($this->folder_id){
-            $allfiles = $this->showFiles($this->folder_id);
-        } else {
-            $allfiles = $this->showFiles($this->getFolders()[0]['folder_id']);
-        }
+        $allfiles = $this->showFiles($this->folder_id);
         $folders =  \Folder::findBySQL('range_id = ?', array($this->container['cid']));
         return array_merge($this->getAttrArray(), array('allfiles' => $allfiles, 'folders' => $folders));
     }

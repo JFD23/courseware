@@ -7,6 +7,8 @@ use Symfony\Component\DomCrawler\Crawler;
 class CodeBlock extends Block
 {
     const NAME = 'Quellcode';
+    const BLOCK_CLASS = 'layout';
+    const DESCRIPTION = 'Quelltexte werden ihrer Syntax entsprechend farblich dargestellt';
 
     public function initialize()
     {
