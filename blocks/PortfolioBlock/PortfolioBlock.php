@@ -36,7 +36,6 @@ class PortfolioBlock extends Block
             'content' => "",
             'show_note' => $show_note
         );
-        
     }
 
     public function author_view()
