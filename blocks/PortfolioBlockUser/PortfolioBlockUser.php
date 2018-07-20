@@ -10,6 +10,8 @@ use Symfony\Component\DomCrawler\Crawler;
 class PortfolioBlockUser extends Block
 {
     const NAME = 'Öffentliche Notiz';
+    const BLOCK_CLASS = 'portfolio';
+    const DESCRIPTION = 'Diese Notiz können alle Nutzer lesen, die Zugriff auf mein Portfolio haben';
 
     public function initialize()
     {

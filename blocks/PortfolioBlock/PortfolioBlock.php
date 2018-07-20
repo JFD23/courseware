@@ -9,7 +9,9 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class PortfolioBlock extends Block
 {
-    const NAME = 'private Notiz';
+    const NAME = 'Private Notiz';
+    const BLOCK_CLASS = 'portfolio';
+    const DESCRIPTION = 'Diese Notiz kann niemand ausser mir selbst sehen.';
 
     public function initialize()
     {

@@ -10,6 +10,8 @@ use Symfony\Component\DomCrawler\Crawler;
 class PortfolioBlockSupervisor extends Block
 {
     const NAME = 'Notiz für Supervisor';
+    const BLOCK_CLASS = 'portfolio';
+    const DESCRIPTION = 'Diese Notiz können nur meine Supervisoren lesen und beantworten';
 
     public function initialize()
     {
