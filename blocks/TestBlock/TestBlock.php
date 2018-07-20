@@ -10,6 +10,8 @@ use Mooc\UI\Block;
 class TestBlock extends Block 
 {
     const NAME = 'Quiz';
+    const BLOCK_CLASS = 'interaction';
+    const DESCRIPTION = 'Stellt ein Aufgabenblatt aus Vips zur Verfügung';
 
     function initialize()
     {
