@@ -30,12 +30,10 @@ class PortfolioBlockUser extends Block
         if (strpos($content, "<!DOCTYPE html") == 0 ) {
             $content = \STUDIP\Markup::markAsHtml($content);
         }
-        $show_note = ($this->container['current_user']->id == $owner);
 		$content = formatReady($content);
         
         return array(
-            'content' => "",
-            'show_note' => $show_note
+            'content' => $content,
         );
         
     }
