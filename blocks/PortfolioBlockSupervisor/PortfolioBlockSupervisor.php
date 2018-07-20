@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Mooc\UI\PortfolioBlockSupervisor;
 
 use Mooc\UI\Block;
@@ -47,7 +47,7 @@ class PortfolioBlockSupervisor extends Block
             $content = \STUDIP\Markup::markAsHtml($content);
         }
 		$content = formatReady($content);
-
+        
         $this->setGrade(1.0);
         if ($supervisor || $owner) {
             return array(
@@ -140,7 +140,7 @@ class PortfolioBlockSupervisor extends Block
         if($this->getCurrentUser()->id == $supervisorId) {
             // second param in if-block is special case for uos. old studip with new wysiwyg
             if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
-                $this->supervisorcontent = \STUDIP\Markup::markAsHtml(\STUDIP\Markup::purify((string) $data['supervisorcontent']));
+                $this->supervisorcontent = \STUDIP\Markup::purifyHtml((string) $data['supervisorcontent']);
             } else {
               $this->supervisorcontent = (string) $data['supervisorcontent'];
             }
