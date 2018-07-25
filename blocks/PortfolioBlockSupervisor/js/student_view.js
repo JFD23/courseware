@@ -1,5 +1,7 @@
 import jQuery from 'jquery'
 import StudentView from 'js/student_view'
+import helper from 'js/url'
+import templates from 'js/templates'
 
 export default StudentView.extend({
     events: {
@@ -46,7 +48,6 @@ export default StudentView.extend({
                     var errorMessage = 'Could not update the block: '+jQuery.parseJSON(error.responseText).reason;
                     alert(errorMessage);
                     console.log(errorMessage, arguments);
-                })
-            .done();
+                });
     }
 });
