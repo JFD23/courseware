@@ -76,6 +76,7 @@ class PortfolioBlockUser extends Block
                 $href->setAttribute("target", "_blank");
                 }
             }
+            \NotificationCenter::postNotification('UserDidPostNotiz', $this->id, \Course::findCurrent()->id);
             $this->content = $dom->saveHTML();
         }
 

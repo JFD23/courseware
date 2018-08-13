@@ -100,6 +100,7 @@ class PortfolioBlockSupervisor extends Block
                 }
             }
             $this->content = $dom->saveHTML();
+            \NotificationCenter::postNotification('UserDidPostSupervisorNotiz', $this->id, \Course::findCurrent()->id);
         }
 		$supervisorcontent = \STUDIP\Markup::purifyHtml((string) $data['supervisorcontent']);
         if ($supervisorcontent == "") {
@@ -141,8 +142,10 @@ class PortfolioBlockSupervisor extends Block
             // second param in if-block is special case for uos. old studip with new wysiwyg
             if ($this->container['version']->newerThan(3.1) || $this->container['wysiwyg_refined']) {
                 $this->supervisorcontent = \STUDIP\Markup::purifyHtml((string) $data['supervisorcontent']);
+                \NotificationCenter::postNotification('SupervisorDidPostAnswer', $this->id, \Course::findCurrent()->id);
             } else {
               $this->supervisorcontent = (string) $data['supervisorcontent'];
+              \NotificationCenter::postNotification('SupervisorDidPostAnswer', $this->id, \Course::findCurrent()->id);
             }
             return array(
                 'content' => formatReady($this->content),
