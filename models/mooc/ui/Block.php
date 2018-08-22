@@ -308,7 +308,7 @@ abstract class Block {
         $seminar = \Seminar::getInstance($this->_model->seminar_id);
         $status = $seminar->getStatus();
         if ($status == \Config::get()->getValue('SEM_CLASS_PORTFOLIO')){
-            //checken ob Block für Bearbeitung gesperrt ist
+            //checken ob Block fï¿½r Bearbeitung gesperrt ist
             require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/LockedBlock.class.php');
             if(\LockedBlock::isLocked($this->id)){
                 return false;
@@ -519,8 +519,7 @@ abstract class Block {
         if (isset($this->_progress)) {
             $this->_progress->store();
         }
-        $this->_model->chdate = time();
-        $this->_model->store();
+
     }
 
     // enforce current user with 'canUpdate' permission of this block
