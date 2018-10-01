@@ -23,7 +23,10 @@ class PortfolioBlock extends Block
         $cid = $this->container['cid'];
 
         require_once(get_config('PLUGINS_PATH') . '/uos/EportfolioPlugin/models/Eportfoliomodel.class.php');
-        $owner = \Eportfoliomodel::getOwner($cid);
+        $portfolio = \Eportfoliomodel::find($cid);
+        if ($portfolio){
+            $owner = $portfolio->owner;
+        }
 
         $this->setGrade(1.0);
         
