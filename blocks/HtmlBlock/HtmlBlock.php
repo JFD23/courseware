@@ -31,6 +31,12 @@ class HtmlBlock extends Block
 
         $content = formatReady($content);
 
+        $encoding = '&lt;?xml encoding="utf-8" ?&gt;';
+
+        if (strrpos($content, $encoding) !== false) {
+            $content = \str_replace($content, $encoding);
+        }
+
         return array('content' => $content);
     }
 
